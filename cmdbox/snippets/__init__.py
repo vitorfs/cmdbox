@@ -1,1 +1,1 @@
-default_app_config = 'cmdbox.profiles.apps.SnippetsConfig'
+default_app_config = 'cmdbox.snippets.apps.SnippetsConfig'

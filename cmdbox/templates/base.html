@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}cmdbox{% endblock %}</title>
+  {% block stylesheet %}{% endblock %}
+</head>
+<body>
+  {% block app_wrapper %}
+    <header>
+      {% block header %}
+      {% endblock %}
+    </header>
+    {% block content %}
+    {% endblock %}
+    <footer>
+      {% block footer %}
+      {% endblock %}
+    </footer>
+  {% endblock %}
+  {% block javascript %}
+  {% endblock %}
+</body>
+</html>

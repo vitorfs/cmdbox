@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     'cmdbox.core',
     'cmdbox.profiles',
+    'cmdbox.snippets',
 ]
 
 MIDDLEWARE_CLASSES = [

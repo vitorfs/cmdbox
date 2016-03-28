@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
 
     'cmdbox.core',
-    'cmdbox.notes'
+    'cmdbox.profiles',
 ]
 
 MIDDLEWARE_CLASSES = [

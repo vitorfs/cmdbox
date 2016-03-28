@@ -7,4 +7,6 @@ before_script:
   - python manage.py migrate
 script:
   - flake8 cmdbox
-  - python manage.py test --settings=cmdbox.tests_settings
+  - coverage run manage.py test --settings=cmdbox.tests_settings
+after_success:
+  - coveralls

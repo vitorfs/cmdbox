@@ -1,0 +1,33 @@
+{% load i18n widget_tweaks %}
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger">
+    <button type="button" class="close" data-dismiss="alert" aria-label="{% trans 'Close' %}">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {% for error in form.non_field_errors %}
+      <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% for hidden in form.hidden_fields %}
+  {{ hidden }}
+{% endfor %}
+
+{% for field in form.visible_fields %}
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label for="{{ field.id_for_label }}" class="control-label">{{ field.label }}</label>
+    {% if forloop.counter == 1 %}
+      {% render_field field class='form-control' autofocus='' %}
+    {% else %}
+      {% render_field field class='form-control' %}
+    {% endif %}
+    {% for error in field.errors %}
+      <span class="help-block">{{ error }}</span>
+    {% endfor %}
+    {% if field.help_text %}
+      <span class="help-block">{{ field.help_text }}</span>
+    {% endif %}
+  </div>
+{% endfor %}

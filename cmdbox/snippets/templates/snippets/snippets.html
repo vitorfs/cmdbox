@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
-{% block content %}
+{% load i18n %}
 
+{% block content %}
   <h2 class="page-header">
     {% if page_user.get_full_name %}
       {{ page_user.get_full_name }} <small class="text-muted">({{ page_user.username }})</small>
@@ -9,5 +10,15 @@
       {{ page_user.username }}
     {% endif %}
   </h2>
-
+  <ul class="nav nav-pills">
+    <li role="presentation" class="active">
+      <a href="#">{% trans 'Snippets' %}</a>
+    </li>
+    <li role="presentation">
+      <a href="#">{% trans 'Templates' %}</a>
+    </li>
+    <li role="presentation">
+      <a href="#">{% trans 'Scripts' %}</a>
+    </li>
+  </ul>
 {% endblock %}

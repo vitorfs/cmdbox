@@ -11,6 +11,13 @@ header {
   border-bottom: 1px solid #eee;
 }
 
+header .btn-link,
+header .btn-link:hover,
+header .btn-link:active {
+  color: #555;
+  text-decoration: none;
+}
+
 .logo {
   margin: 0;
   font-size: 1.6em;

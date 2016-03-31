@@ -7,7 +7,7 @@
 {% block content %}
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <h2 class="page-header">{% trans 'Sign up' %}</h2>
+      <h2 class="page-header">{% trans 'Sign up for CmdBox' %}</h2>
       <form method="post">
         {% csrf_token %}
         {% include 'forms/form.html' with form=form %}

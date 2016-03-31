@@ -1,8 +1,9 @@
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.db import transaction
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from cmdbox.profiles.forms import UserForm, ProfileForm
 
@@ -35,3 +36,8 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'profiles/change_password.html', {'form': form})
+
+
+def profile(request, username):
+    user = get_object_or_404(User, username__iexact=username)
+    return render(request, 'profiles/profile.html', {'page_user': user})

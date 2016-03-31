@@ -37,3 +37,18 @@ header .btn-link:active {
   margin-right: 10px;
   margin-top: -3px;
 }
+
+.messages.alert {
+  border-radius: 0;
+  border-left: 0 none;
+  border-right: 0 none;
+}
+
+/* bootstrap reset */
+pre {
+  padding: 0;
+  background-color: transparent;
+  border: 0 none;
+  margin: 0;
+  border-radius: 0;
+}

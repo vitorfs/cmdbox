@@ -10,7 +10,7 @@ def add(request):
         form = CreateSnippetForm(request.POST)
         form.instance.user = request.user
         if form.is_valid():
-            snippet = form.save()
+            form.save()
             return redirect(reverse('profile', args=(request.user.username,)))
     else:
         form = CreateSnippetForm()

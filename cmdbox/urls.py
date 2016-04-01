@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^signup/$', core_views.signup, name='signup'),
     url(r'^settings/$', profiles_views.account_settings, name='account_settings'),
     url(r'^password/$', profiles_views.change_password, name='change_password'),
+    url(r'^snippets/', include('cmdbox.snippets.urls', namespace='snippets')),
     url(r'^(?P<username>[^/]+)/$', profiles_views.profile, name='profile'),
-    url(r'^snippets/', include('cmdbox.snippets.urls', namespace='snippets'))
+    url(r'', include('cmdbox.api.urls', namespace='api'))
 ]

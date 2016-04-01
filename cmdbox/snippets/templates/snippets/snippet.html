@@ -5,6 +5,18 @@
 {% block stylesheet %}
   <!--link rel="stylesheet" href="{% static 'vendor/prism/css/prism.css' %}"-->
   <link rel="stylesheet" type="text/css" href="{% static 'vendor/highlight/styles/xcode.css' %}">
+  <style type="text/css">
+    body {
+      background-color: #fff;
+    }
+    .content {
+      background-color: #fafafa;
+      border-bottom: 1px solid #ddd;
+    }
+    .nav-tabs {
+      border: 0;
+    }
+  </style>
 {% endblock %}
 
 {% block javascript %}
@@ -19,8 +31,14 @@
 {% endblock %}
 
 {% block content %}
-  <h3 class="page-header">
-    <span class="pull-right">
+
+  <h3 class="page-header" style="border-bottom: 0">
+    <span class="pull-right" style="margin-top: -3px">
+
+      <button type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon-save"></span> Save
+        <span class="badge">0</span>
+      </button>
 
       <button type="button" class="btn btn-default btn-sm">
         <span class="glyphicon glyphicon-star"></span>
@@ -28,14 +46,9 @@
         <span class="badge">{{ snippet.stars }}</span>
       </button>
 
-      <button type="button" class="btn btn-default btn-sm">
+      <button type="button" class="btn btn-primary btn-sm">
         <span class="glyphicon glyphicon-flash"></span> Use
         <span class="badge">{{ snippet.used }}</span>
-      </button>
-
-      <button type="button" class="btn btn-default btn-sm">
-        <span class="glyphicon glyphicon-save"></span> Make a Copy
-        <span class="badge">0</span>
       </button>
 
     </span>
@@ -47,6 +60,13 @@
             data-placement="top"
             title="{% trans 'This is a private snippet' %}"
             data-container="body"></span>
+    {% elif snippet.visibility == snippet.UNLISTED %}
+      <span class="glyphicon glyphicon-eye-close"
+            style="color: #5bc0de; font-size: 75%; cursor: help"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="{% trans 'This is a unlisted snippet' %}"
+            data-container="body"></span>
     {% endif %}
 
     <a href="{% url 'profile' snippet.user.username %}">{{ snippet.user.username }}</a>
@@ -54,9 +74,10 @@
     <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}">{{ snippet.slug }}</a>
   </h3>
 
-  <p class="lead">{{ snippet.description }}</p>
+  <p class="">{{ snippet.description }}</p>
 
-  <ul class="nav nav-pills" style="margin-bottom: 20px">
+
+  <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active">
       <a href="#">
         <span class="glyphicon glyphicon-console"></span>
@@ -67,7 +88,7 @@
       <a href="#">
         <span class="glyphicon glyphicon-tags"></span>
         {% trans 'Versions' %}
-        <span class="badge">{{ snippet.version }}</span>
+
       </a>
     </li>
     <li role="presentation">
@@ -78,24 +99,29 @@
     </li>
   </ul>
 
+</div>
+</main>
+
+<main style="margin-top: 20px">
+  <div class="container">
+
 <div class="panel panel-default">
   <div class="panel-heading">
-    <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}">
+    <span class="pull-right">
+      <a href="">
+        <span class="glyphicon glyphicon-pencil"></span>
+      </a>
+      <a href="">
+        <span class="glyphicon glyphicon-trash"></span>
+      </a>
+    </span>
+    <a href="{% url 'api:snippet' snippet.user.username snippet.slug %}">
       <span class="glyphicon glyphicon-link"></span>
-      {% url 'snippets:snippet' snippet.user.username snippet.slug %}
+      {% url 'api:snippet' snippet.user.username snippet.slug %}
     </a>
   </div>
   <div class="panel-body">
-<pre><code class="lang-python">def add(request):
-  if request.method == 'POST':
-      form = CreateSnippetForm(request.POST)
-      form.instance.user = request.user
-      if form.is_valid():
-          snippet = form.save()
-          return redirect(reverse('profile', args=(request.user.username,)))
-  else:
-      form = CreateSnippetForm()
-  return render(request, 'snippets/add.html', {'form': form})</code></pre>
+    <pre><code class="lang-python">{{ snippet.content }}</code></pre>
   </div>
   <div class="panel-footer">
     <button type="button" class="btn btn-default btn-sm">Copy snippet to clipboard</button>

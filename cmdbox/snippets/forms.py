@@ -8,7 +8,7 @@ class CreateSnippetForm(forms.ModelForm):
 
     class Meta:
         model = Snippet
-        fields = ['slug', 'description', 'visibility']
+        fields = ['slug', 'description', 'visibility', 'content']
 
     def __init__(self, *args, **kwargs):
         super(CreateSnippetForm, self).__init__(*args, **kwargs)

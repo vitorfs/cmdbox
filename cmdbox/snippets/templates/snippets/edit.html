@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load i18n static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{% static 'snippets/css/snippets.css' %}">
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'vendor/ace/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script>
+    var editor = ace.edit("content");
+    editor.setTheme("ace/theme/clouds");
+    editor.getSession().setMode("ace/mode/html");
+    editor.getSession().setUseWrapMode(true);
+  </script>
+
+{% endblock %}
+
+
+{% block content %}
+  {% include 'snippets/includes/header.html' with active='snippet_code' %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <a href="{% url 'api:snippet' snippet.user.username snippet.slug %}">
+          <span class="glyphicon glyphicon-link"></span>
+          {% url 'api:snippet' snippet.user.username snippet.slug %}
+        </a>
+      </div>
+      <div class="panel-body" style="padding: 0">
+        <textarea name="content" class="hide"></textarea>
+        <div id="content" style="width: 100%; height: 350px;">{{ snippet.content }}</div>
+      </div>
+      <div class="panel-footer">
+        <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
+        <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}" class="btn btn-default">
+          {% trans 'Discard changes' %}
+        </a>
+      </div>
+    </div>
+  </form>
+{% endblock %}

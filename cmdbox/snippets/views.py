@@ -20,3 +20,12 @@ def add(request):
 def snippet(request, username, slug):
     _snippet = get_object_or_404(Snippet, user__username=username, slug=slug)
     return render(request, 'snippets/snippet.html', {'snippet': _snippet})
+
+
+def edit(request, username, slug):
+    _snippet = get_object_or_404(Snippet, user__username=username, slug=slug)
+    return render(request, 'snippets/edit.html', {'snippet': _snippet})
+
+
+def delete(request, username, slug):
+    pass

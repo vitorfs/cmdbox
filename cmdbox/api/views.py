@@ -1,69 +1,29 @@
-from string import Formatter
-import pyparsing
-
-from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 
 from cmdbox.snippets.models import Snippet
 
 
-def _count_format_args(format_string):
-    formatter = Formatter()
-    format_iterator = formatter.parse(format_string)
-    named_args = set()
-    for _tuple in format_iterator:
-        arg = _tuple[1]
-        if arg is not None:
-            named_args.add(arg)
-    print named_args
-    return len(named_args)
-
-
-def _remove_comments(format_string):
-    comment = pyparsing.nestedExpr("/*", "*/").suppress()
-    output = comment.transformString(format_string)
-    return output
-
-
 def snippet(request, username, slug):
     try:
         _snippet = Snippet.objects.get(user__username=username, slug=slug)
+        is_help_request = 'h' in request.GET or 'help' in request.GET
 
-        path = request.get_full_path()
-        format_string = _snippet.content
-        params_count = _count_format_args(format_string)
-
-        help_request = ('h' or 'help' in request.GET)
-
-        if help_request:
-            output = format_string
+        if is_help_request:
+            output = _snippet.content
         else:
-            has_format_param = params_count > 0
+            format_params = _snippet.get_params()
 
-            has_qs = '?' in path
-            qs_param = list()
-            if has_qs:
-                str_qs_param = path.split('?')[1]
-                if len(str_qs_param) > 0:
-                    qs_param = str_qs_param.split(',')
+            get_args = request.GET.get('a', request.GET.get('args', None))
+            args = list()
+            if get_args is not None:
+                args = get_args.split(',')
 
-            output = ''
+            kwargs = dict()
+            for field_name in format_params['kwargs']:
+                if field_name in request.GET:
+                    kwargs[field_name] = request.GET.get(field_name)
 
-            if has_format_param:
-                if not len(qs_param):
-                    output = format_string  # help content
-                elif qs_param:
-                    if len(qs_param) == params_count:
-                        output = format_string.format(*qs_param)
-                    else:
-                        return HttpResponseBadRequest('Invalid number of arguments.')
-            else:
-                if has_qs:
-                    output = format_string
-                else:
-                    output = _remove_comments(format_string)  # help content
-
+            output = _snippet.use(args, kwargs)
         return HttpResponse(output, content_type='text/plain')
     except Snippet.DoesNotExist:
-        return HttpResponseBadRequest('Invalid URL. The snippet does not exist.')
-    return render(request, 'api/snippet.html')
+        return HttpResponseBadRequest('Invalid URL. The snippet does not exist.', content_type='text/plain')

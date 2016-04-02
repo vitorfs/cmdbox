@@ -1,0 +1,27 @@
+body {
+  background-color: #fff;
+}
+.content {
+  background-color: #fafafa;
+  border-bottom: 1px solid #ddd;
+}
+.nav-tabs {
+  border: 0;
+}
+
+
+.panel-snippet .btn-snippet {
+  text-decoration: none;
+  color: #999;
+  margin-left: 5px;
+}
+
+.panel-snippet .btn-snippet:hover,
+.panel-snippet .btn-snippet:active {
+  color: #555;
+}
+
+.panel-snippet .btn-delete:hover,
+.panel-snippet .btn-delete:active {
+  color: #d43f3a;
+}

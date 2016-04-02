@@ -3,24 +3,11 @@
 {% load i18n static %}
 
 {% block stylesheet %}
-  <!--link rel="stylesheet" href="{% static 'vendor/prism/css/prism.css' %}"-->
   <link rel="stylesheet" type="text/css" href="{% static 'vendor/highlight/styles/xcode.css' %}">
-  <style type="text/css">
-    body {
-      background-color: #fff;
-    }
-    .content {
-      background-color: #fafafa;
-      border-bottom: 1px solid #ddd;
-    }
-    .nav-tabs {
-      border: 0;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="{% static 'snippets/css/snippets.css' %}">
 {% endblock %}
 
 {% block javascript %}
-  <!--script src="{% static 'vendor/prism/js/prism.js' %}"></script-->
   <script src="{% static 'vendor/highlight/highlight.pack.js' %}"></script>
   <script>
     hljs.initHighlightingOnLoad();
@@ -32,102 +19,31 @@
 
 {% block content %}
 
-  <h3 class="page-header" style="border-bottom: 0">
-    <span class="pull-right" style="margin-top: -3px">
+  {% include 'snippets/includes/header.html' with active='snippet_code' %}
 
-      <button type="button" class="btn btn-default btn-sm">
-        <span class="glyphicon glyphicon-save"></span> Save
-        <span class="badge">0</span>
-      </button>
-
-      <button type="button" class="btn btn-default btn-sm">
-        <span class="glyphicon glyphicon-star"></span>
-        Star
-        <span class="badge">{{ snippet.stars }}</span>
-      </button>
-
-      <button type="button" class="btn btn-primary btn-sm">
-        <span class="glyphicon glyphicon-flash"></span> Use
-        <span class="badge">{{ snippet.used }}</span>
-      </button>
-
-    </span>
-
-    {% if snippet.visibility == snippet.PRIVATE %}
-      <span class="glyphicon glyphicon-lock"
-            style="color: #f0ad4e; font-size: 75%; cursor: help"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="{% trans 'This is a private snippet' %}"
-            data-container="body"></span>
-    {% elif snippet.visibility == snippet.UNLISTED %}
-      <span class="glyphicon glyphicon-eye-close"
-            style="color: #5bc0de; font-size: 75%; cursor: help"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="{% trans 'This is a unlisted snippet' %}"
-            data-container="body"></span>
-    {% endif %}
-
-    <a href="{% url 'profile' snippet.user.username %}">{{ snippet.user.username }}</a>
-    <span class="text-muted">/</span>
-    <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}">{{ snippet.slug }}</a>
-  </h3>
-
-  <p class="">{{ snippet.description }}</p>
-
-
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-      <a href="#">
-        <span class="glyphicon glyphicon-console"></span>
-        {% trans 'Snippet Code' %}
+  <div class="panel panel-default panel-snippet">
+    <div class="panel-heading">
+      <span class="pull-right">
+        <a href="{% url 'snippets:edit' snippet.user.username snippet.slug %}" class="btn-snippet">
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+        <a href="" class="btn-snippet btn-delete">
+          <span class="glyphicon glyphicon-trash"></span>
+        </a>
+      </span>
+      <a href="{% url 'api:snippet' snippet.user.username snippet.slug %}">
+        <span class="glyphicon glyphicon-link"></span>
+        {% url 'api:snippet' snippet.user.username snippet.slug %}
       </a>
-    </li>
-    <li role="presentation">
-      <a href="#">
-        <span class="glyphicon glyphicon-tags"></span>
-        {% trans 'Versions' %}
-
-      </a>
-    </li>
-    <li role="presentation">
-      <a href="#">
-        <span class="glyphicon glyphicon-cog"></span>
-        {% trans 'Settings' %}
-      </a>
-    </li>
-  </ul>
-
-</div>
-</main>
-
-<main style="margin-top: 20px">
-  <div class="container">
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <span class="pull-right">
-      <a href="">
-        <span class="glyphicon glyphicon-pencil"></span>
-      </a>
-      <a href="">
-        <span class="glyphicon glyphicon-trash"></span>
-      </a>
-    </span>
-    <a href="{% url 'api:snippet' snippet.user.username snippet.slug %}">
-      <span class="glyphicon glyphicon-link"></span>
-      {% url 'api:snippet' snippet.user.username snippet.slug %}
-    </a>
+    </div>
+    <div class="panel-body">
+      <pre><code class="lang-python">{{ snippet.content }}</code></pre>
+    </div>
+    <div class="panel-footer">
+      <button type="button" class="btn btn-default btn-sm">Copy snippet to clipboard</button>
+      <button type="button" class="btn btn-default btn-sm">Copy endpoint to clipboard</button>
+      <button type="button" class="btn btn-default btn-sm">Use in the web browser</button>
+    </div>
   </div>
-  <div class="panel-body">
-    <pre><code class="lang-python">{{ snippet.content }}</code></pre>
-  </div>
-  <div class="panel-footer">
-    <button type="button" class="btn btn-default btn-sm">Copy snippet to clipboard</button>
-    <button type="button" class="btn btn-default btn-sm">Copy endpoint to clipboard</button>
-    <button type="button" class="btn btn-default btn-sm">Use in the web browser</button>
-  </div>
-</div>
 
 {% endblock %}

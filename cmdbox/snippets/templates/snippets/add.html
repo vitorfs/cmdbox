@@ -80,8 +80,6 @@
           {% endif %}
         </div>
 
-        {% render_field form.content class='form-control' %}
-
         <hr>
         {% with choices=form.instance.VISIBILITY_CHOICES %}
           <div class="form-group{% if form.visibility.errors %} has-error{% endif %}">

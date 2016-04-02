@@ -1,0 +1,43 @@
+{% load i18n static %}
+
+<header>
+  <div class="container">
+    <div class="pull-right">
+      {% if user.is_authenticated %}
+        <div class="btn-group">
+          <button type="button"
+                  class="btn btn-primary dropdown-toggle"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
+            <span class="glyphicon glyphicon-plus"></span>
+            {% trans 'Add' %}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'snippets:add' %}">{% trans 'Snippet' %}</a></li>
+            <li><a href="javascript:void(0);">{% trans 'Template scaffold' %}</a></li>
+            <li><a href="javascript:void(0);">{% trans 'Script' %}</a></li>
+          </ul>
+        </div>
+        <a href="{% url 'profile' user.username %}" class="btn btn-link" title="{% trans 'My profile' %}">
+          <span class="glyphicon glyphicon-user"></span>
+          {{ user.username }}
+        </a>
+        <a href="{% url 'account_settings' %}" class="btn btn-link" title="{% trans 'Account settings' %}">
+          <span class="glyphicon glyphicon-cog"></span>
+        </a>
+        <a href="{% url 'logout' %}" class="btn btn-link" title="{% trans 'Log out' %}">
+          <span class="glyphicon glyphicon-log-out"></span>
+        </a>
+      {% else %}
+        <a href="{% url 'signup' %}" class="btn btn-default">{% trans 'Sign up' %}</a>
+        <a href="{% url 'login' %}" class="btn btn-default">{% trans 'Login' %}</a>
+      {% endif %}
+    </div>
+    <a href="{% url 'home' %}" class="logo">
+      <img src="{% static 'img/logo.png' %}" alt="cmdbox">
+      CmdBox
+    </a>
+  </div>
+</header>

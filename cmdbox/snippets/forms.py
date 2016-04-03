@@ -22,3 +22,10 @@ class CreateSnippetForm(forms.ModelForm):
 
         if user.snippets.filter(slug=slug).exists():
             self.add_error('slug', 'A snippet with this name already exists.')
+
+
+class EditSnippetForm(forms.ModelForm):
+
+    class Meta:
+        model = Snippet
+        fields = ['content', ]

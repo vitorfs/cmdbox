@@ -23,14 +23,16 @@
 
   <div class="panel panel-default panel-snippet">
     <div class="panel-heading">
-      <span class="pull-right">
-        <a href="{% url 'snippets:edit' snippet.user.username snippet.slug %}" class="btn-snippet">
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
-        <a href="" class="btn-snippet btn-delete">
-          <span class="glyphicon glyphicon-trash"></span>
-        </a>
-      </span>
+      {% if user.is_authenticated and user == snippet.user %}
+        <span class="pull-right">
+          <a href="{% url 'snippets:edit' snippet.user.username snippet.slug %}" class="btn-snippet">
+            <span class="glyphicon glyphicon-pencil"></span>
+          </a>
+          <a href="{% url 'snippets:delete' snippet.user.username snippet.slug %}" class="btn-snippet btn-delete">
+            <span class="glyphicon glyphicon-trash"></span>
+          </a>
+        </span>
+      {% endif %}
       <a href="{% url 'api:snippet' snippet.user.username snippet.slug %}">
         <span class="glyphicon glyphicon-link"></span>
         {% url 'api:snippet' snippet.user.username snippet.slug %}

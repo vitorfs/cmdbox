@@ -34,6 +34,7 @@
       <span class="text-muted">/</span>
       <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}">{{ snippet.slug }}</a>
     </h3>
+
     <p class="">{{ snippet.description }}</p>
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation"{% if active == 'snippet_code' %} class="active"{% endif %}>
@@ -55,6 +56,7 @@
         </a>
       </li>
     </ul>
+
   </div>
 </main>
 <main style="margin-top: 20px">

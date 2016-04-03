@@ -10,8 +10,9 @@ class CreateSnippetForm(forms.ModelForm):
         model = Snippet
         fields = ['slug', 'description', 'visibility']
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(CreateSnippetForm, self).__init__(*args, **kwargs)
+        self.instance.user = user
         self.fields['slug'].validators.append(validate_forbidden_slug)
 
     def clean(self):

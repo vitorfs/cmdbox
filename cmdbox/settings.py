@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # 'debug_toolbar',
     'widget_tweaks',
 
+    'cmdbox.api',
     'cmdbox.core',
     'cmdbox.profiles',
     'cmdbox.snippets',

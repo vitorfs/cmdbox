@@ -9,7 +9,7 @@ def snippet(request, username, slug):
         is_help_request = 'h' in request.GET or 'help' in request.GET
 
         if is_help_request:
-            output = _snippet.content
+            return HttpResponse(_snippet.content, content_type='text/plain')
         else:
             format_params = _snippet.get_params()
 
@@ -23,7 +23,15 @@ def snippet(request, username, slug):
                 if field_name in request.GET:
                     kwargs[field_name] = request.GET.get(field_name)
 
-            output = _snippet.use(args, kwargs)
-        return HttpResponse(output, content_type='text/plain')
+            try:
+                output = _snippet.use(args, kwargs)
+                return HttpResponse(output, content_type='text/plain')
+            except ValueError, ve:
+                return HttpResponseBadRequest(ve.message, content_type='text/plain')
+            except IndexError, ie:
+                return HttpResponseBadRequest(ie, content_type='text/plain')
+            except KeyError, ke:
+                return HttpResponseBadRequest(ke.message, content_type='text/plain')
+
     except Snippet.DoesNotExist:
         return HttpResponseBadRequest('Invalid URL. The snippet does not exist.', content_type='text/plain')

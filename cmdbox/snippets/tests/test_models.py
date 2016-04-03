@@ -17,3 +17,15 @@ class SnippetsModelsTests(TestCase):
     def test_review_unicode(self):
         self.assertTrue(isinstance(self.review, Review))
         self.assertEqual(self.review.__unicode__(), 'test-snippet (1)')
+
+    def test_get_cleaned_content(self):
+        self.snippet.content = '/* comment */test content'
+        expected = 'test content'
+        actual = self.snippet.get_cleaned_content()
+        self.assertEqual(expected, actual)
+
+    def test_get_cleaned_content_2(self):
+        self.snippet.content = '/* comment */test content="/*"'
+        expected = 'test content="/*"'
+        actual = self.snippet.get_cleaned_content()
+        self.assertEqual(expected, actual)

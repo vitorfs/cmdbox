@@ -22,7 +22,7 @@ class Snippet(AbstractService):
         return self.slug
 
     def get_cleaned_content(self):
-        comment = pyparsing.nestedExpr("/*", "*/").suppress()
+        comment = pyparsing.nestedExpr('/*', '*/').suppress()
         cleaned_content = comment.transformString(self.content)
         return cleaned_content
 

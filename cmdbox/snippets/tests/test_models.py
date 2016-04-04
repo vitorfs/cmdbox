@@ -1,3 +1,6 @@
+# coding: utf-8
+
+from __future__ import unicode_literals
 from model_mommy import mommy
 
 from django.test import TestCase
@@ -29,3 +32,40 @@ class SnippetsModelsTests(TestCase):
         expected = 'test content="/*"'
         actual = self.snippet.get_cleaned_content()
         self.assertEqual(expected, actual)
+
+    def test_get_cleaned_content_3(self):
+        self.snippet.content = 'éçñø§^à'
+        expected = 'éçñø§^à'
+        actual = self.snippet.get_cleaned_content()
+        self.assertEqual(expected, actual)
+
+    def test_get_params_with_kwargs(self):
+        self.snippet.content = 'This is a {test} {formating} with kwargs'
+        expected = {'args': list(), 'kwargs': set(['test', 'formating'])}
+        actual = self.snippet.get_params()
+        self.assertEqual(expected, actual)
+
+    def test_get_params_with_args(self):
+        self.snippet.content = 'This is a {0} {1} with args'
+        expected = {'args': ['0', '1'], 'kwargs': set()}
+        actual = self.snippet.get_params()
+        self.assertEqual(expected, actual)
+
+    def test_get_params_with_positional_args(self):
+        self.snippet.content = 'This is a {} {} with args'
+        expected = {'args': ['', ''], 'kwargs': set()}
+        actual = self.snippet.get_params()
+        self.assertEqual(expected, actual)
+
+    def test_get_params_with_args_and_kwargs(self):
+        self.snippet.content = 'This is a {test} {format} {0} {1} with args and kwargs'
+        expected = {'args': ['0', '1'], 'kwargs': set(['test', 'format'])}
+        actual = self.snippet.get_params()
+        self.assertEqual(expected, actual)
+
+    def test_use(self):
+        self.snippet.content = 'This is a usage {test} with {format}'
+        expected = 'This is a usage lorem with ipsum'
+        actual = self.snippet.use(list(), {'test': 'lorem', 'format': 'ipsum'})
+        self.assertEqual(expected, actual)
+        self.assertEqual(1, self.snippet.used)

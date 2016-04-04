@@ -51,6 +51,12 @@ class SnippetsModelsTests(TestCase):
         actual = self.snippet.get_params()
         self.assertEqual(expected, actual)
 
+    def test_get_params_with_args_duplicate_key(self):
+        self.snippet.content = '{0}{1}{0}'
+        expected = {'args': ['0', '1'], 'kwargs': set()}
+        actual = self.snippet.get_params()
+        self.assertEqual(expected, actual)
+
     def test_get_params_with_positional_args(self):
         self.snippet.content = 'This is a {} {} with args'
         expected = {'args': ['', ''], 'kwargs': set()}

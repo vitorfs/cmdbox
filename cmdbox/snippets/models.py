@@ -76,10 +76,18 @@ class Snippet(models.Model):
         return params
 
     def use(self, args, kwargs):
-        output = self.get_cleaned_content().format(*args, **kwargs)
-        self.used += 1
-        self.last_used = timezone.now()
-        self.save()
+        output = ''
+        try:
+            output = self.get_cleaned_content().format(*args, **kwargs)
+            self.used += 1
+            self.last_used = timezone.now()
+            self.save()
+        except ValueError:
+            raise ValueError(_('[S02] Cannot switch from manual field specification to automatic field numbering.'))
+        except IndexError:
+            raise IndexError(_('[S03]'))
+        except KeyError:
+            raise KeyError(_('[S04]'))
         return output
 
 

@@ -69,3 +69,18 @@ class SnippetsModelsTests(TestCase):
         actual = self.snippet.use(list(), {'test': 'lorem', 'format': 'ipsum'})
         self.assertEqual(expected, actual)
         self.assertEqual(1, self.snippet.used)
+
+    def test_use_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            self.snippet.content = '{0}{}'
+            self.snippet.use(['a', 'b'], dict())
+
+    def test_use_raises_index_error(self):
+        with self.assertRaises(IndexError):
+            self.snippet.content = '{0}'
+            self.snippet.use(list(), dict())
+
+    def test_use_raises_key_error(self):
+        with self.assertRaises(KeyError):
+            self.snippet.content = '{kwarg}'
+            self.snippet.use(list(), dict())

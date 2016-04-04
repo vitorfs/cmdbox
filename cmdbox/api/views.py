@@ -1,4 +1,7 @@
+from __future__ import unicode_literals
+
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils.translation import ugettext as _
 
 from cmdbox.snippets.models import Snippet
 
@@ -26,12 +29,9 @@ def snippet(request, username, slug):
             try:
                 output = _snippet.use(args, kwargs)
                 return HttpResponse(output, content_type='text/plain')
-            except ValueError, ve:
-                return HttpResponseBadRequest(ve.message, content_type='text/plain')
-            except IndexError, ie:
-                return HttpResponseBadRequest(ie, content_type='text/plain')
-            except KeyError, ke:
-                return HttpResponseBadRequest(ke.message, content_type='text/plain')
+            except (ValueError, IndexError, KeyError) as e:
+                return HttpResponseBadRequest(e.message, content_type='text/plain')
 
     except Snippet.DoesNotExist:
-        return HttpResponseBadRequest('Invalid URL. The snippet does not exist.', content_type='text/plain')
+        error_message = _('[S01] Invalid URL. The snippet does not exist.')
+        return HttpResponseBadRequest(error_message, content_type='text/plain')

@@ -72,7 +72,67 @@ class ApiSnippetInvalidURLTests(TestCase):
         self.assertEqual(self.response.status_code, 400)
 
     def test_output(self):
-        self.assertContains(self.response, 'Invalid URL. The snippet does not exist.', status_code=400)
+        self.assertContains(self.response, '[S01]', status_code=400)
+
+    def test_content_type(self):
+        self.assertEqual(self.response['Content-Type'], 'text/plain')
+
+
+class ApiSnippetValueErrorTests(TestCase):
+    def setUp(self):
+        content = 'Content {0} {1} {} {} testing'
+        self.snippet = mommy.make('snippets.Snippet', user__username='john', slug='test', content=content)
+        data = {'args': 'arg1,arg2,arg3,arg4'}
+        self.response = self.client.get(
+            r('api:snippet', args=('john', 'test')),
+            data
+        )
+
+    def test_get(self):
+        self.assertEqual(self.response.status_code, 400)
+
+    def test_output(self):
+        self.assertContains(self.response, '[S02]', status_code=400)
+
+    def test_content_type(self):
+        self.assertEqual(self.response['Content-Type'], 'text/plain')
+
+
+class ApiSnippetIndexErrorTests(TestCase):
+    def setUp(self):
+        content = 'Content {0} {1} testing'
+        self.snippet = mommy.make('snippets.Snippet', user__username='john', slug='test', content=content)
+        data = {'args': 'arg1'}
+        self.response = self.client.get(
+            r('api:snippet', args=('john', 'test')),
+            data
+        )
+
+    def test_get(self):
+        self.assertEqual(self.response.status_code, 400)
+
+    def test_output(self):
+        self.assertContains(self.response, '[S03]', status_code=400)
+
+    def test_content_type(self):
+        self.assertEqual(self.response['Content-Type'], 'text/plain')
+
+
+class ApiSnippetKeyErrorTests(TestCase):
+    def setUp(self):
+        content = 'Content {kwarg1} {kwarg2} testing'
+        self.snippet = mommy.make('snippets.Snippet', user__username='john', slug='test', content=content)
+        data = {'kwarg1': 'value1'}
+        self.response = self.client.get(
+            r('api:snippet', args=('john', 'test')),
+            data
+        )
+
+    def test_get(self):
+        self.assertEqual(self.response.status_code, 400)
+
+    def test_output(self):
+        self.assertContains(self.response, '[S04]', status_code=400)
 
     def test_content_type(self):
         self.assertEqual(self.response['Content-Type'], 'text/plain')

@@ -16,6 +16,13 @@ class Profile(models.Model):
         verbose_name = _('profile')
         verbose_name_plural = _('profiles')
 
+    def get_display_name(self):
+        full_name = self.user.get_full_name()
+        if full_name:
+            return full_name
+        else:
+            return self.user.username
+
 
 class SSHKey(models.Model):
     user = models.ForeignKey(User, related_name='ssh_keys')

@@ -8,7 +8,9 @@
         var str = $(this).val()
         var slug = $.cmdbox.slug(str);
         $(this).val(slug);
-      }
+      };
+
+      $("[data-toggle='tooltip']").tooltip();
     },
 
     slug: function (str) {

@@ -1,14 +1,14 @@
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 
 from cmdbox.profiles.forms import UserForm, ProfileForm
+from cmdbox.snippets import views as snippets_views
 
 
 @login_required
@@ -50,5 +50,4 @@ def change_password(request):
 
 
 def profile(request, username):
-    user = get_object_or_404(User, username__iexact=username)
-    return render(request, 'profiles/profile.html', {'page_user': user})
+    return snippets_views.snippets(request, username)

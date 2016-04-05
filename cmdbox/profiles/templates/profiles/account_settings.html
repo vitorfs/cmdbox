@@ -2,23 +2,30 @@
 
 {% load i18n %}
 
-{% block content %}
-  <h2 class="page-header">
+{% block content_header %}
+  <h2>
     {% trans 'Profile' %} <small class="text-muted">({{ user.username }})</small>
   </h2>
+{% endblock %}
+
+{% block content %}
   <div class="row">
     <div class="col-md-4">
-      {% include 'profiles/includes/menu.html' with active='profile' %}
+      {% include 'profiles/includes/menu_settings.html' with active='profile' %}
     </div>
     <div class="col-md-8">
-      <form method="post">
-        {% csrf_token %}
-        {% include 'forms/form.html' with form=user_form %}
-        {% include 'forms/form.html' with form=profile_form %}
-        <div class="form-group">
-          <button type="submit" class="btn btn-primary">{% trans 'Save changes' %}</button>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form method="post">
+            {% csrf_token %}
+            {% include 'forms/form.html' with form=user_form %}
+            {% include 'forms/form.html' with form=profile_form %}
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">{% trans 'Save changes' %}</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 {% endblock %}

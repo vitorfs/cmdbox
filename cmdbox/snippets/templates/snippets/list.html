@@ -2,34 +2,22 @@
 
 {% load humanize i18n %}
 
-{% block javascript %}
-  <script>
-    $(function () {
-      $("[data-toggle='tooltip']").tooltip();
-    });
-  </script>
+{% block title %}
+  {% blocktrans trimmed with username=page_user.username %}
+    Snippets - {{ username }}
+  {% endblocktrans %}
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'profile' page_user.username %}">{{ page_user.profile.get_display_name }}</a></li>
+  <li class="active">{% trans 'Snippets' %}</li>
+{% endblock %}
+
+{% block content_header %}
+  {% include 'profiles/includes/menu_profile.html' with active='snippets' %}
 {% endblock %}
 
 {% block content %}
-  <h2 class="page-header">
-    {% if page_user.get_full_name %}
-      {{ page_user.get_full_name }} <small class="text-muted">({{ page_user.username }})</small>
-    {% else %}
-      {{ page_user.username }}
-    {% endif %}
-  </h2>
-  <ul class="nav nav-pills" style="margin-bottom: 20px">
-    <li role="presentation" class="active">
-      <a href="#">{% trans 'Snippets' %}</a>
-    </li>
-    <li role="presentation">
-      <a href="#">{% trans 'Templates' %}</a>
-    </li>
-    <li role="presentation">
-      <a href="#">{% trans 'Scripts' %}</a>
-    </li>
-  </ul>
-
   <div class="panel panel-default">
     <div class="panel-heading">
       <h3 class="panel-title">
@@ -64,7 +52,7 @@
               </li>
             </ul>
           </div>
-          <a href="{% url 'snippets:add' %}" class="btn btn-primary btn-sm">
+          <a href="{% url 'add_snippet' %}" class="btn btn-primary btn-sm">
             <span class="glyphicon glyphicon-plus"></span> {% trans 'Add' %}
           </a>
         </div>
@@ -79,7 +67,7 @@
     </div>
     <div class="list-group">
       {% for snippet in page_user.snippets.all %}
-        <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}"
+        <a href="{% url 'snippets:details' snippet.user.username snippet.slug %}"
            class="list-group-item{% if snippet.visibility == snippet.PRIVATE %} list-group-item-warning{% elif snippet.visibility == snippet.UNLISTED %} list-group-item-info %}{% endif %}">
           <div class="pull-right" style="margin-top: 11px;">
             {% if snippet.language %}
@@ -127,6 +115,5 @@
     </div>
   </div>
 
-<ul class="pagination" style="margin-top: 0"> <li class="disabled"><a aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li> <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li> <li><a href="#">2</a></li> <li><a href="#">3</a></li> <li><a href="#">4</a></li> <li><a href="#">5</a></li> <li><a aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li> </ul>
-
+  <ul class="pagination" style="margin-top: 0"> <li class="disabled"><a aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li> <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li> <li><a href="#">2</a></li> <li><a href="#">3</a></li> <li><a href="#">4</a></li> <li><a href="#">5</a></li> <li><a aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li> </ul>
 {% endblock %}

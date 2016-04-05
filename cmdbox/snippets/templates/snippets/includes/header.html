@@ -1,63 +1,56 @@
 {% load i18n %}
 
-    <h3 class="page-header" style="border-bottom: 0">
-      <span class="pull-right" style="margin-top: -3px">
-        <button type="button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-save"></span> {% trans 'Save' %}
-          <span class="badge">0</span>
-        </button>
-        <button type="button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-star"></span> {% trans 'Star' %}
-          <span class="badge">{{ snippet.stars }}</span>
-        </button>
-        <button type="button" class="btn btn-primary btn-sm">
-          <span class="glyphicon glyphicon-flash"></span> {% trans 'Use' %}
-          <span class="badge">{{ snippet.used }}</span>
-        </button>
-      </span>
-      {% if snippet.visibility == snippet.PRIVATE %}
-        <span class="glyphicon glyphicon-lock"
-              style="color: #f0ad4e; font-size: 75%; cursor: help"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="{% trans 'This is a private snippet' %}"
-              data-container="body"></span>
-      {% elif snippet.visibility == snippet.UNLISTED %}
-        <span class="glyphicon glyphicon-eye-close"
-              style="color: #5bc0de; font-size: 75%; cursor: help"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="{% trans 'This is a unlisted snippet' %}"
-              data-container="body"></span>
-      {% endif %}
-      <a href="{% url 'profile' snippet.user.username %}">{{ snippet.user.username }}</a>
-      <span class="text-muted">/</span>
-      <a href="{% url 'snippets:snippet' snippet.user.username snippet.slug %}">{{ snippet.slug }}</a>
-    </h3>
+<h2>
+  <span class="pull-right" style="margin-top: -3px">
+    <button type="button" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-save"></span> {% trans 'Save' %}
+      <span class="badge">0</span>
+    </button>
+    <button type="button" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-star"></span> {% trans 'Star' %}
+      <span class="badge">{{ snippet.stars }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-sm">
+      <span class="glyphicon glyphicon-flash"></span> {% trans 'Use' %}
+      <span class="badge">{{ snippet.used }}</span>
+    </button>
+  </span>
+  {% if snippet.visibility == snippet.PRIVATE %}
+    <span class="glyphicon glyphicon-lock"
+          style="color: #f0ad4e; font-size: 75%; cursor: help"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="{% trans 'This is a private snippet' %}"
+          data-container="body"></span>
+  {% elif snippet.visibility == snippet.UNLISTED %}
+    <span class="glyphicon glyphicon-eye-close"
+          style="color: #5bc0de; font-size: 75%; cursor: help"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="{% trans 'This is a unlisted snippet' %}"
+          data-container="body"></span>
+  {% endif %}
+  {{ snippet.user.username }}/{{ snippet.slug }}
+</h2>
 
-    <p class="">{{ snippet.description }}</p>
-    <ul class="nav nav-tabs" role="tablist">
-      <li role="presentation"{% if active == 'snippet_code' %} class="active"{% endif %}>
-        <a href="#">
-          <span class="glyphicon glyphicon-console"></span>
-          {% trans 'Snippet Code' %}
-        </a>
-      </li>
-      <li role="presentation"{% if active == 'versions' %} class="active"{% endif %}>
-        <a href="#">
-          <span class="glyphicon glyphicon-tags"></span>
-          {% trans 'Versions' %}
-        </a>
-      </li>
-      <li role="presentation"{% if active == 'settings' %} class="active"{% endif %}>
-        <a href="#">
-          <span class="glyphicon glyphicon-cog"></span>
-          {% trans 'Settings' %}
-        </a>
-      </li>
-    </ul>
-
-  </div>
-</main>
-<main style="margin-top: 20px">
-  <div class="container">
+<p class="">{{ snippet.description }}</p>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation"{% if active == 'snippet_code' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-console"></span>
+      {% trans 'Snippet Code' %}
+    </a>
+  </li>
+  <li role="presentation"{% if active == 'versions' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-tags"></span>
+      {% trans 'Versions' %}
+    </a>
+  </li>
+  <li role="presentation"{% if active == 'settings' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-cog"></span>
+      {% trans 'Settings' %}
+    </a>
+  </li>
+</ul>

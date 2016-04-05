@@ -14,12 +14,19 @@
     editor.getSession().setMode("ace/mode/html");
     editor.getSession().setUseWrapMode(true);
   </script>
-
 {% endblock %}
 
+{% block breadcrumb %}
+  {% include 'snippets/includes/breadcrumb.html' with snippet=form.instance %}
+  <li><a href="{% url 'snippets:details' form.instance.user.username form.instance.slug %}">{{ form.instance.slug }}</a></li>
+  <li class="active">Edit</li>
+{% endblock %}
+
+{% block content_header %}
+  {% include 'snippets/includes/header.html' with active='snippet_code' snippet=form.instance %}
+{% endblock %}
 
 {% block content %}
-  {% include 'snippets/includes/header.html' with active='snippet_code' snippet=form.instance %}
   <form method="post">
     {% csrf_token %}
     <div class="panel panel-default">
@@ -35,7 +42,7 @@
       </div>
       <div class="panel-footer">
         <button type="submit" class="btn btn-primary">{% trans 'Save' %}</button>
-        <a href="{% url 'snippets:snippet' form.instance.user.username form.instance.slug %}" class="btn btn-default">
+        <a href="{% url 'snippets:details' form.instance.user.username form.instance.slug %}" class="btn btn-default">
           {% trans 'Discard changes' %}
         </a>
       </div>

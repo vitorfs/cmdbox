@@ -1,47 +1,127 @@
 @import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,300,700,600,200,900);
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   font-family: 'Source Code Pro', 'courier';
-  background-color: #fafafa;
 }
 
-header {
+.wrapper {
+  position: relative;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -50px;
+}
+
+.push {
+  height: 50px;
+}
+
+footer {
+  border-top: 1px solid #1194c1;
+  background-color: #14a6d8;
+  color: #fff;
+  height: 50px;
+  padding-top: 14px;
+  position: relative;
+}
+
+footer a,
+footer a:hover,
+footer a:active {
+  color: #fff;
+}
+
+footer .links {
+  margin-left: 30px;
+}
+
+header .navbar {
+  margin-bottom: 0;
+  border-bottom: 1px solid #ddd;
+  border-radius: 0;
   background-color: #fff;
-  padding: 1em 0;
-  border-bottom: 1px solid #eee;
+  height: 60px;
 }
 
-header .btn-link,
-header .btn-link:hover,
-header .btn-link:active {
-  color: #555;
-  text-decoration: none;
-}
-
-.logo {
-  margin: 0;
-  font-size: 1.6em;
+.navbar-default .navbar-brand {
+  color: #393939;
   font-weight: 600;
-  color: #393939;
 }
 
-.logo:hover,
-.logo:active {
-  text-decoration: none;
-  color: #393939;
-}
-
-.logo img {
+header .navbar-brand img {
   width: 38px;
-  float: left;
-  margin-right: 10px;
-  margin-top: -3px;
+}
+
+header .navbar-nav > li > a {
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+
+header .navbar-brand {
+  line-height: 38px;
+  padding: 11px 15px;
+}
+
+header .navbar-btn {
+  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 .messages.alert {
   border-radius: 0;
   border-left: 0 none;
   border-right: 0 none;
+  margin-bottom: 0;
+}
+
+.content-header {
+  background-color: #fafafa;
+  border-bottom: 1px solid #ddd;
+}
+
+.content-header h2,
+.content-header h3 {
+  margin: 30px 0 20px;
+}
+
+.content-header .nav-tabs {
+  border: 0;
+}
+
+main {
+  margin-top: 20px;
+}
+
+.content-breadcrumb {
+  border-bottom: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.content-breadcrumb .breadcrumb {
+  margin-bottom: 0;
+  background-color: transparent;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 12px;
+}
+
+.content-breadcrumb .breadcrumb li.active {
+  color: #aaa;
+}
+
+.content-breadcrumb .breadcrumb li a {
+  color: #777;
+  text-decoration: underline;
+}
+
+.content-breadcrumb .breadcrumb > li + li:before {
+  content: "/\00a0";
 }
 
 /* bootstrap reset */

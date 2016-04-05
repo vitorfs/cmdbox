@@ -1,15 +1,3 @@
-body {
-  background-color: #fff;
-}
-.content {
-  background-color: #fafafa;
-  border-bottom: 1px solid #ddd;
-}
-.nav-tabs {
-  border: 0;
-}
-
-
 .panel-snippet .btn-snippet {
   text-decoration: none;
   color: #999;

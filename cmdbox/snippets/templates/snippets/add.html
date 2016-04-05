@@ -21,10 +21,22 @@
   </script>
 {% endblock %}
 
+{% block breadcrumb %}
+  <li><a href="{% url 'snippets' %}">{% trans 'Snippets' %}</a></li>
+  <li class="active">{% trans 'Add' %}</li>
+{% endblock %}
+
+{% block content_header %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h2>{% trans 'Add snippet' %}</h2>
+    </div>
+  </div>
+{% endblock %}
+
 {% block content %}
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <h2 class="page-header">{% trans 'Add snippet' %}</h2>
       <form method="post" id="form-create-snippet">
         {% csrf_token %}
 

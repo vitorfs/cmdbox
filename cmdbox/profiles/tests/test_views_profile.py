@@ -11,6 +11,3 @@ class ProfilesProfileTests(TestCase):
 
     def test_get(self):
         self.assertEqual(self.response.status_code, 200)
-
-    def test_template(self):
-        self.assertTemplateUsed(self.response, 'profiles/profile.html')

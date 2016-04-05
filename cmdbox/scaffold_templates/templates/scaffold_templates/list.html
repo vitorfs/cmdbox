@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% load humanize i18n %}
+
+{% block title %}
+  {% blocktrans trimmed with username=page_user.username %}
+    Scaffold Templates - {{ username }}
+  {% endblocktrans %}
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'profile' page_user.username %}">{{ page_user.profile.get_display_name }}</a></li>
+  <li class="active">{% trans 'Scaffold Templates' %}</li>
+{% endblock %}
+
+{% block content_header %}
+  {% include 'profiles/includes/menu_profile.html' with active='scaffold_templates' %}
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

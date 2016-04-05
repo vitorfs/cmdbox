@@ -16,19 +16,37 @@
   </head>
   <body>
     {% block app_wrapper %}
-      {% block header %}
+      <div class="wrapper">
         {% include 'includes/header.html' %}
-      {% endblock %}
-      {% include 'includes/messages.html' %}
-      <main class="content">
-        <div class="container">
-          {% block content %}
+        {% block content_wrapper %}
+          {% block breadcrumb_wrapper %}
+            <div class="content-breadcrumb">
+              <div class="container">
+                <ol class="breadcrumb">
+                  <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home"></span></a></li>
+                  {% block breadcrumb %}
+                  {% endblock %}
+                </ol>
+              </div>
+            </div>
           {% endblock %}
-        </div>
-      </main>
-      {% block footer %}
-        {% include 'includes/footer.html' %}
-      {% endblock %}
+          {% include 'includes/messages.html' %}
+          <div class="content-header">
+            <div class="container">
+              {% block content_header %}
+              {% endblock %}
+            </div>
+          </div>
+          <main>
+            <div class="container">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </main>
+          <div class="push"></div>
+        {% endblock %}
+      </div>
+      {% include 'includes/footer.html' %}
     {% endblock %}
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>

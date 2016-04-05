@@ -10,7 +10,7 @@ class SnippetsAddTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('john', 'john@doe.com', '123')
         self.client.login(username='john', password='123')
-        self.response = self.client.get(r('snippets:add'))
+        self.response = self.client.get(r('add_snippet'))
 
     def test_get(self):
         self.assertEqual(self.response.status_code, 200)
@@ -38,7 +38,7 @@ class SnippetsAddValidPostTests(TestCase):
         self.user = User.objects.create_user('john', 'john@doe.com', '123')
         self.client.login(username='john', password='123')
         data = {'slug': 'test', 'description': 'Test snippet', 'visibility': 1}
-        self.response = self.client.post(r('snippets:add'), data)
+        self.response = self.client.post(r('add_snippet'), data)
 
     def test_post(self):
         self.assertEqual(self.response.status_code, 302)
@@ -51,7 +51,7 @@ class SnippetsAddInvalidPostTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('john', 'john@doe.com', '123')
         self.client.login(username='john', password='123')
-        self.response = self.client.post(r('snippets:add'), dict())
+        self.response = self.client.post(r('add_snippet'), dict())
 
     def test_post(self):
         self.assertEqual(200, self.response.status_code)

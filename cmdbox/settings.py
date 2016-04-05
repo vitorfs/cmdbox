@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'cmdbox.api',
     'cmdbox.core',
+    'cmdbox.help',
     'cmdbox.profiles',
     'cmdbox.scaffold_templates',
     'cmdbox.snippets',

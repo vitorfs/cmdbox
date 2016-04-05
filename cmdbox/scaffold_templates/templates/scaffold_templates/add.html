@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load i18n static widget_tweaks %}
+
+{% block content_header %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <h2>{% trans 'Add scaffold template' %}</h2>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <div class="form-group">
+          <button type="submit" id="btn-create-scaffold-template" class="btn btn-primary btn-block">
+            {% trans 'Create scaffold template' %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

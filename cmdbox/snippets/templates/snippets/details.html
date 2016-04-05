@@ -17,10 +17,16 @@
   </script>
 {% endblock %}
 
-{% block content %}
+{% block breadcrumb %}
+  {% include 'snippets/includes/breadcrumb.html' with snippet=snippet %}
+  <li class="active">{{ snippet.slug }}</li>
+{% endblock %}
 
+{% block content_header %}
   {% include 'snippets/includes/header.html' with active='snippet_code' %}
+{% endblock %}
 
+{% block content %}
   <div class="panel panel-default panel-snippet">
     <div class="panel-heading">
       {% if user.is_authenticated and user == snippet.user %}
@@ -47,5 +53,4 @@
       <button type="button" class="btn btn-default btn-sm">Use in the web browser</button>
     </div>
   </div>
-
 {% endblock %}

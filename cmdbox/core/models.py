@@ -34,6 +34,7 @@ class AbstractService(models.Model):
 
 class FileSystemObject(models.Model):
     name = models.CharField(_('name'), max_length=255)
+    size = models.PositiveIntegerField(_('size'), default=0)
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
 

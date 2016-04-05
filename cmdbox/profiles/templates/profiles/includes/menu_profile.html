@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<h2>
+  {% if page_user.get_full_name %}
+    {{ page_user.get_full_name }} <small class="text-muted">({{ page_user.username }})</small>
+  {% else %}
+    {{ page_user.username }}
+  {% endif %}
+</h2>
+<ul class="nav nav-tabs">
+  <li role="presentation"{% if active == 'snippets' %} class="active"{% endif %}>
+    <a href="{% url 'snippets:list' page_user.username %}">{% trans 'Snippets' %}</a>
+  </li>
+  <li role="presentation"{% if active == 'scaffold_templates' %} class="active"{% endif %}>
+    <a href="{% url 'scaffold_templates:list' page_user.username %}">{% trans 'Scaffold Templates' %}</a>
+  </li>
+</ul>

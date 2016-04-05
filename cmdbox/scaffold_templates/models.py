@@ -28,7 +28,6 @@ class File(FileSystemObject):
     template = models.ForeignKey(ScaffoldTemplate, related_name='files')
     folder = models.ForeignKey(Folder, null=True, blank=True, related_name='files')
     extension = models.CharField(_('extension'), max_length=10, null=True, blank=True)
-    size = models.PositiveIntegerField(_('size'), default=0)
 
     class Meta:
         verbose_name = _('file')

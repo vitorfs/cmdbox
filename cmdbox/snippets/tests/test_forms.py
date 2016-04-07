@@ -3,7 +3,7 @@ from model_mommy import mommy
 from django.test import TestCase
 
 from cmdbox.snippets.forms import CreateSnippetForm
-from cmdbox.snippets.validators import validate_forbidden_slug
+from cmdbox.core.validators import validate_forbidden_slug
 
 
 class CreateSnippetFormTests(TestCase):

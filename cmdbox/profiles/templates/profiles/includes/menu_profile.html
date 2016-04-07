@@ -1,12 +1,40 @@
 {% load i18n %}
 
 <h2>
+  <img src="{{ page_user.profile.get_avatar }}" alt="{{ page_user.profile.get_display_name }}" class="img-circle">
   {% if page_user.get_full_name %}
     {{ page_user.get_full_name }} <small class="text-muted">({{ page_user.username }})</small>
   {% else %}
     {{ page_user.username }}
   {% endif %}
+  <a href="{% url 'account_settings' %}" role="button" class="btn btn-default btn-sm pull-right" style="margin-top: 16px">
+    <span class="glyphicon glyphicon-pencil"></span> Edit profile
+  </a>
 </h2>
+<ul class="profile-details">
+  {% if page_user.email %}
+    <li>
+      <span class="glyphicon glyphicon-envelope"></span> {{ page_user.email }}
+    </li>
+  {% endif %}
+  {% if page_user.profile.url %}
+    <li>
+      <a href="{{ page_user.profile.url }}" target="_blank">
+        <span class="glyphicon glyphicon-globe"></span> {{ page_user.profile.url }}
+      </a>
+    </li>
+  {% endif %}
+  {% if page_user.profile.location %}
+    <li>
+      <span class="glyphicon glyphicon-map-marker"></span> {{ page_user.profile.location }}
+    </li>
+  {% endif %}
+  {% if page_user.profile.company %}
+    <li>
+      <span class="glyphicon glyphicon-briefcase"></span> {{ page_user.profile.company }}
+    </li>
+  {% endif %}
+</ul>
 <ul class="nav nav-tabs">
   <li role="presentation"{% if active == 'snippets' %} class="active"{% endif %}>
     <a href="{% url 'snippets:list' page_user.username %}">{% trans 'Snippets' %}</a>

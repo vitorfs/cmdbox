@@ -2,6 +2,12 @@
 
 {% load i18n %}
 
+{% block title %}{% trans 'Account settings' %}{% endblock %}
+
+{% block breadcrumb %}
+  <li class="active">{% trans 'Account settings' %}</li>
+{% endblock %}
+
 {% block content_header %}
   <h2>
     {% trans 'Profile' %} <small class="text-muted">({{ user.username }})</small>

@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from cmdbox.profiles.gravatar import get_gravatar_url
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -22,6 +24,9 @@ class Profile(models.Model):
             return full_name
         else:
             return self.user.username
+
+    def get_avatar(self, size=64):
+        return get_gravatar_url(self.user.email, size)
 
 
 class SSHKey(models.Model):

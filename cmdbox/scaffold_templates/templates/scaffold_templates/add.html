@@ -2,6 +2,25 @@
 
 {% load i18n static widget_tweaks %}
 
+{% block javascript %}
+  <script>
+    $(function () {
+      $("#name").keyup(function () {
+        var text = $(this).val();
+        var slug = $.cmdbox.slug(text);
+        $(".slug-preview").text(slug);
+        $("#id_slug").val(slug);
+      });
+
+      $("#form-create-snippet").submit(function () {
+        $("#btn-create-snippet").text("Creating…");
+        $("#btn-create-snippet").prop("disabled", true);
+      });
+
+    });
+  </script>
+{% endblock %}
+
 {% block content_header %}
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
@@ -15,7 +34,63 @@
     <div class="col-md-8 col-md-offset-2">
       <form method="post">
         {% csrf_token %}
-        {{ form }}
+        {% include 'forms/includes/non_field_errors.html' with form=form %}
+        {% include 'forms/includes/hidden_fields.html' with form=form %}
+        <div class="form-group{% if form.slug.errors %} has-error{% endif %}">
+          <label for="{{ form.slug.id_for_label }}" class="control-label">{{ form.slug.label }}</label>
+          <div class="row">
+            <div class="col-sm-5">
+              <input type="text" id="name"
+                     class="form-control"
+                     value="{{ form.slug.value|default_if_none:'' }}"
+                     maxlength="{{ form.slug.field.max_length }}"
+                     autofocus>
+              {% render_field form.slug class='form-control' type='hidden' %}
+            </div>
+            <div class="col-sm-7">
+              <span class="help-block">
+                /{{ user.username }}/<strong class="slug-preview">{{ form.slug.value|default_if_none:'your-scaffold-template' }}</strong>/
+              </span>
+            </div>
+          </div>
+          {% for error in form.slug.errors %}
+            <span class="help-block">{{ error }}</span>
+          {% endfor %}
+          {% if form.slug.help_text %}
+            <span class="help-block">{{ form.slug.help_text }}</span>
+          {% endif %}
+        </div>
+        {% include 'forms/includes/field.html' with field=form.description %}
+        <hr>
+        {% with choices=form.instance.VISIBILITY_CHOICES %}
+          <div class="form-group{% if form.visibility.errors %} has-error{% endif %}">
+            <div class="radio">
+              <label>
+                <input type="radio" name="visibility" value="{{ choices.0.0|slugify }}" {% if form.visibility.value|slugify == choices.0.0|slugify %} checked{% endif %}>
+                {{ choices.0.1 }}
+              </label>
+            </div>
+            <span class="help-block">{% trans 'Anyone can see this scaffold template.' %}</span>
+            <div class="radio">
+              <label>
+                <input type="radio" name="visibility" value="{{ choices.1.0|slugify }}" {% if form.visibility.value|slugify == choices.1.0|slugify %} checked{% endif %}>
+                {{ choices.1.1 }}
+              </label>
+            </div>
+            <span class="help-block">{% trans 'It\'s still public but won\'t be published in the CmdBox directories.' %}</span>
+            <div class="radio">
+              <label>
+                <input type="radio" name="visibility" value="{{ choices.2.0|slugify }}" {% if form.visibility.value|slugify == choices.2.0|slugify %} checked{% endif %}>
+                {{ choices.2.1 }}
+              </label>
+            </div>
+            <span class="help-block">{% trans 'Only you can see this scaffold template.' %}</span>
+            {% for error in form.visibility.errors %}
+              <span class="help-block">{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endwith %}
+        <hr>
         <div class="form-group">
           <button type="submit" id="btn-create-scaffold-template" class="btn btn-primary btn-block">
             {% trans 'Create scaffold template' %}

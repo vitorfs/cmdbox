@@ -29,6 +29,16 @@
         .replace(/-+/g, '-'); // collapse dashes
 
       return str;
+    },
+
+    loading: function () {
+      $(".loading").show();
+      $("body").css("overflow", "hidden");
+    },
+
+    stopLoading: function () {
+      $(".loading").hide();
+      $("body").css("overflow", "scroll");
     }
 
   };

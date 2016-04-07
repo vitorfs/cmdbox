@@ -24,30 +24,30 @@
               <div class="container">
                 <ol class="breadcrumb">
                   <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home"></span></a></li>
-                  {% block breadcrumb %}
-                  {% endblock %}
+                  {% block breadcrumb %}{% endblock %}
                 </ol>
               </div>
             </div>
-          {% endblock %}
+          {% endblock breadcrumb_wrapper %}
           {% include 'includes/messages.html' %}
           <div class="content-header">
             <div class="container">
-              {% block content_header %}
-              {% endblock %}
+              {% block content_header %}{% endblock %}
             </div>
           </div>
           <main>
             <div class="container">
-              {% block content %}
-              {% endblock %}
+              {% block content %}{% endblock %}
             </div>
           </main>
           <div class="push"></div>
-        {% endblock %}
+        {% endblock content_wrapper %}
       </div>
       {% include 'includes/footer.html' %}
-    {% endblock %}
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    {% endblock app_wrapper %}
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/expanding.js' %}"></script>

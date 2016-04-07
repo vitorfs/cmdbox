@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from cmdbox.snippets.validators import validate_forbidden_slug
+from cmdbox.core.validators import validate_forbidden_slug
 
 
 class SnippetsValidatorsTests(TestCase):

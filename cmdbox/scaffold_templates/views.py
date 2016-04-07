@@ -15,14 +15,14 @@ def index(request):
 @login_required
 def add(request):
     if request.method == 'POST':
-        form = CreateScaffoldTemplate(request.POST)
+        form = CreateScaffoldTemplate(request.user, request.POST)
         if form.is_valid():
             scaffold_template = form.save()
             return redirect(
                 reverse('scaffold_templates:details', args=(scaffold_template.user.username, scaffold_template.slug))
             )
     else:
-        form = CreateScaffoldTemplate()
+        form = CreateScaffoldTemplate(request.user)
     return render(request, 'scaffold_templates/add.html', {'form': form})
 
 

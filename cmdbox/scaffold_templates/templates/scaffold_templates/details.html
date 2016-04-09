@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'profile' scaffold_template.user.username %}">{{ scaffold_template.user.profile.get_display_name }}</a></li>
+  <li><a href="{% url 'scaffold_templates:list' scaffold_template.user.username %}">{% trans 'Scaffold Templates' %}</a></li>
+  <li class="active">{{ scaffold_template.slug }}</li>
+{% endblock %}
+
+{% block messages %}
+  {{ block.super }}
+  <div class="messages alert alert-warning"
+       role="alert">
+    <div class="container">
+      <span class="glyphicon glyphicon-edit"></span>
+      This scaffold template is still a working draft.
+    </div>
+  </div>
+{% endblock %}
+
+{% block content_header %}
+  {% include 'scaffold_templates/includes/header.html' with active='files' %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}

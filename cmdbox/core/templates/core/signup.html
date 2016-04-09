@@ -4,17 +4,21 @@
 
 {% block title %}{% trans 'Sign up for CmdBox' %}{% endblock %}
 
-{% block content %}
-  <div class="row">
-    <div class="col-md-8 col-md-offset-2">
-      <h2 class="page-header">{% trans 'Sign up for CmdBox' %}</h2>
-      <form method="post">
-        {% csrf_token %}
-        {% include 'forms/form.html' with form=form %}
-        <div class="form-group">
-          <button type="submit" class="btn btn-default">{% trans 'Submit' %}</button>
+{% block content_wrapper %}
+  <main>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <h2 class="page-header">{% trans 'Sign up for CmdBox' %}</h2>
+          <form method="post">
+            {% csrf_token %}
+            {% include 'forms/form.html' with form=form %}
+            <div class="form-group">
+              <button type="submit" class="btn btn-default">{% trans 'Submit' %}</button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
+  </main>
 {% endblock %}

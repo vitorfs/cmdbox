@@ -1,0 +1,56 @@
+{% load i18n %}
+
+<h2>
+  <span class="pull-right" style="margin-top: -3px">
+    <button type="button" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-save"></span> {% trans 'Save' %}
+      <span class="badge">0</span>
+    </button>
+    <button type="button" class="btn btn-default btn-sm">
+      <span class="glyphicon glyphicon-star"></span> {% trans 'Star' %}
+      <span class="badge">{{ scaffold_template.stars }}</span>
+    </button>
+    <button type="button" class="btn btn-primary btn-sm">
+      <span class="glyphicon glyphicon-flash"></span> {% trans 'Use' %}
+      <span class="badge">{{ scaffold_template.used }}</span>
+    </button>
+  </span>
+  {% if scaffold_template.visibility == scaffold_template.PRIVATE %}
+    <span class="glyphicon glyphicon-lock"
+          style="color: #f0ad4e; font-size: 75%; cursor: help"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="{% trans 'This is a private scaffold_template' %}"
+          data-container="body"></span>
+  {% elif scaffold_template.visibility == scaffold_template.UNLISTED %}
+    <span class="glyphicon glyphicon-eye-close"
+          style="color: #5bc0de; font-size: 75%; cursor: help"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="{% trans 'This is a unlisted scaffold_template' %}"
+          data-container="body"></span>
+  {% endif %}
+  {{ scaffold_template.user.username }}/{{ scaffold_template.slug }}
+</h2>
+
+<p class="">{{ scaffold_template.description }}</p>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation"{% if active == 'files' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-folder-open"></span>
+      {% trans 'Files' %}
+    </a>
+  </li>
+  <li role="presentation"{% if active == 'versions' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-tags"></span>
+      {% trans 'Versions' %}
+    </a>
+  </li>
+  <li role="presentation"{% if active == 'settings' %} class="active"{% endif %}>
+    <a href="#">
+      <span class="glyphicon glyphicon-cog"></span>
+      {% trans 'Settings' %}
+    </a>
+  </li>
+</ul>

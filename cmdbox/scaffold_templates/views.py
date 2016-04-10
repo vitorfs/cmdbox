@@ -31,7 +31,6 @@ def scaffold_templates(request, username):
     return render(request, 'scaffold_templates/list.html', {'page_user': user})
 
 
-@login_required
 def details(request, username, slug):
     scaffold_template = get_object_or_404(ScaffoldTemplate, user__username=username, slug=slug)
     return render(request, 'scaffold_templates/details.html', {'scaffold_template': scaffold_template})

@@ -1,8 +1,10 @@
 {% load i18n %}
 
+{% widthratio depth 1 24 as padding %}
+
 {% spaceless %}
-  <tr data-id="{{ file.pk }}" data-parent="{% if file.folder %}{{ file.folder.pk }}{% endif %}">
-    <td style="padding-left: {{ padding }}px">
+  <tr data-id="{{ file.pk }}" data-parent="{% if file.folder %}{{ file.folder.pk }}{% endif %}" data-depth="{{ depth }}">
+    <td style="padding-left: {{ padding|add:8 }}px">
       <span class="toggle-folder">
         {% if file.is_folder %}
           <span class="glyphicon glyphicon-triangle-right text-muted"></span>

@@ -10,13 +10,20 @@
       vertical-align: middle!important;
       display: inline-block;
     }
+
+    #table-files tbody tr td {
+      -webkit-transition: all 0.2s ease 0s;
+         -moz-transition: all 0.2s ease 0s;
+           -o-transition: all 0.2s ease 0s;
+              transition: all 0.2s ease 0s;
+    }
   </style>
 {% endblock %}
 
 {% block javascript %}
   <script>
     $(function () {
-      $(".js-add-file").click(function () {
+      $("main").on("click", ".js-add-file", function () {
         var url = $(this).attr("data-url");
         var folder_id = $(this).attr("data-folder-id");
 
@@ -30,11 +37,17 @@
           success: function (data) {
             if (folder_id === undefined) {
               $("#table-files tbody").prepend(data.form);
+              $("#form-add-file").closest("td").css("padding-left", "26px");
             }
             else {
-              $("#table-files tbody tr[data-id='" + folder_id + "']").after(data.form);
+              var parent = $("#table-files tbody tr[data-id='" + folder_id + "']");
+              var depth = parseInt($(parent).attr("data-depth"));
+              var padding = (26 + ((depth + 1) * 24));
+              $(parent).after(data.form);
+              $("#form-add-file").closest("td").css("padding-left", padding + "px");
             }
             $("#id_add_file-name").focus();
+            $("#id_add_file-name").select();
           },
           complete: function () {
             $.cmdbox.stopLoading();
@@ -42,7 +55,7 @@
         });
       });
 
-      $("#table-files").on("blur", "#id_add_file-name", function () {
+      var saveFile = function () {
         $.ajax({
           url: $("#form-add-file").attr("action"),
           data: $("#form-add-file").serialize(),
@@ -52,8 +65,12 @@
           },
           success: function (data) {
             if (data.is_valid) {
-              $("#form-add-file").closest("tr").remove();
-              $("#table-files tbody").prepend(data.html);
+              $("#table-files tbody").html(data.html);
+              var row = $("#table-files tbody tr[data-id='" + data.file + "']");
+              $(row).addClass("info");
+              setTimeout(function () {
+                $(row).removeClass("info");
+              }, 500)
             }
             else {
               $("#form-add-file").closest("tr").replaceWith(data.form);
@@ -63,7 +80,13 @@
             $.cmdbox.stopLoading();
           }
         });
-      });
+        return false;
+      };
+
+      $("#table-files").on("blur", "#id_add_file-name", saveFile);
+
+      $("#table-files").on("submit", "#form-add-file", saveFile);
+
     });
   </script>
 {% endblock %}

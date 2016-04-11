@@ -37,9 +37,15 @@
 </ul>
 <ul class="nav nav-tabs">
   <li role="presentation"{% if active == 'snippets' %} class="active"{% endif %}>
-    <a href="{% url 'snippets:list' page_user.username %}">{% trans 'Snippets' %}</a>
+    <a href="{% url 'snippets:list' page_user.username %}">
+      {% trans 'Snippets' %}
+      <span class="badge">{{ page_user.snippets.count }}</span>
+    </a>
   </li>
   <li role="presentation"{% if active == 'scaffold_templates' %} class="active"{% endif %}>
-    <a href="{% url 'scaffold_templates:list' page_user.username %}">{% trans 'Scaffold Templates' %}</a>
+    <a href="{% url 'scaffold_templates:list' page_user.username %}">
+      {% trans 'Scaffold Templates' %}
+      <span class="badge">{{ page_user.scaffoldtemplates.count }}</span>
+    </a>
   </li>
 </ul>

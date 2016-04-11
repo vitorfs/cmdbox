@@ -19,4 +19,113 @@
 
 {% block content %}
 
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        <div class="pull-right" style="margin-top: -5px">
+          <button type="button" class="btn btn-link btn-sm" style="font-weight: bold; color: #555">{% trans 'All' %}</button>
+          <button type="button" class="btn btn-link btn-sm">{% trans 'Public' %}</button>
+          <button type="button" class="btn btn-link btn-sm">{% trans 'Unlisted' %}</button>
+          <button type="button" class="btn btn-link btn-sm">{% trans 'Private' %}</button>
+          <div class="btn-group">
+            <button type="button"
+                    class="btn btn-default btn-sm dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+              <span class="glyphicon glyphicon-sort-by-attributes"></span>
+              {% blocktrans with order='name' %}Order by <strong>{{ order }}</strong>{% endblocktrans %}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-check"></span> <strong>{% trans 'name' %}</strong>
+                </a>
+              </li>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-unchecked"></span> {% trans 'stars' %}
+                </a>
+              </li>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-unchecked"></span> {% trans 'numbers of usage' %}
+                </a>
+              </li>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-unchecked"></span> {% trans 'last used' %}
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-check"></span> <strong>{% trans 'asc' %}</strong>
+                </a>
+                <a href="javascript:void(0);">
+                  <span class="glyphicon glyphicon-unchecked"></span> {% trans 'desc' %}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <a href="{% url 'add_scaffold_template' %}" class="btn btn-primary btn-sm">
+            <span class="glyphicon glyphicon-plus"></span> {% trans 'Add' %}
+          </a>
+        </div>
+        {% trans 'Your scaffold templates' %}
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div class="form-group has-feedback" style="margin-bottom: 0;">
+        <input type="text" class="form-control" placeholder="{% trans 'Search for scaffold templates…' %}">
+        <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="list-group">
+      {% for scaffold_template in page_user.scaffoldtemplates.all %}
+        <a href="{% url 'scaffold_templates:details' scaffold_template.user.username scaffold_template.slug %}"
+           class="list-group-item{% if scaffold_template.visibility == scaffold_template.PRIVATE %} list-group-item-warning{% elif scaffold_template.visibility == scaffold_template.UNLISTED %} list-group-item-info %}{% endif %}">
+          <div class="pull-right" style="margin-top: 11px;">
+            {% if scaffold_template.language %}
+              <strong style="opacity:0.8">{{ scaffold_template.language }}</strong>
+            {% endif %}
+            <small data-toggle="tooltip"
+                   data-placement="top"
+                   title="{% blocktrans with version=scaffold_template.version %}Version {{ version }}{% endblocktrans %}"
+                   data-container="body"
+                   style="margin-left: 8px; cursor: help">
+              <span class="glyphicon glyphicon-tag"></span> {{ scaffold_template.version }}
+            </small>
+            <small data-toggle="tooltip"
+                   data-placement="top"
+                   title="{% blocktrans with stars=scaffold_template.stars %}Stars {{ stars }}{% endblocktrans %}"
+                   data-container="body"
+                   style="margin-left: 8px; cursor: help">
+              <span class="glyphicon glyphicon-star"></span> {{ scaffold_template.stars }}
+            </small>
+            <small data-toggle="tooltip"
+                   data-placement="top"
+                   title="{% blocktrans with used=scaffold_template.used %}Used {{ used }} times{% endblocktrans %}"
+                   data-container="body"
+                   style="margin-left: 8px; cursor: help">
+              <span class="glyphicon glyphicon-flash"></span> {{ scaffold_template.used }}
+            </small>
+          </div>
+          <div style="margin-bottom: 5px">
+            {% if scaffold_template.visibility == scaffold_template.PRIVATE %}
+              <span class="glyphicon glyphicon-lock"></span>
+            {% elif scaffold_template.visibility == scaffold_template.UNLISTED %}
+              <span class="glyphicon glyphicon-eye-close"></span>
+            {% endif %}
+            {% if scaffold_template.description %}<strong>{{ scaffold_template.description }}</strong>{% endif %}
+            <small>/{{ user.username }}/{{ scaffold_template.slug }}/</small>
+          </div>
+          <small style="opacity:0.8">
+            Last used {{ scaffold_template.last_used|naturaltime|default_if_none:'never' }}
+          </small>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}

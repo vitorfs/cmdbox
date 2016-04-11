@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from cmdbox.core.models import AbstractService
+from cmdbox.scaffold_templates.validators import validate_folder
 
 
 class ScaffoldTemplate(AbstractService):
@@ -13,12 +14,6 @@ class ScaffoldTemplate(AbstractService):
         verbose_name_plural = _('scaffold template')
         unique_together = (('user', 'slug'), )
         ordering = ('-updated_at', )
-
-    def get_files(self, folder=None):
-        return self.files.filter(folder=folder).prefetch_related('files')
-
-    def get_files_count(self):
-        return self.files.filter(file_type=File.FILE).count()
 
 
 class File(models.Model):
@@ -33,7 +28,7 @@ class File(models.Model):
     extension = models.CharField(_('extension'), max_length=10, null=True, blank=True)
     size = models.PositiveIntegerField(_('size'), default=0)
     template = models.ForeignKey(ScaffoldTemplate, related_name='files')
-    folder = models.ForeignKey('File', null=True, blank=True, related_name='files')
+    folder = models.ForeignKey('File', null=True, blank=True, related_name='files', validators=[validate_folder, ])
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     file_type = models.PositiveSmallIntegerField(_('file type'), choices=FILE_TYPES, default=FILE)
@@ -46,3 +41,6 @@ class File(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def is_folder(self):
+        return self.file_type == File.FOLDER

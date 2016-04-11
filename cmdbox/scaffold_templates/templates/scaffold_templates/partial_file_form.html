@@ -1,0 +1,11 @@
+{% load widget_tweaks %}
+
+<tr>
+  <td colspan="5" style="padding-left: {{ padding }}px">
+    <form id="form-add-file" method="post" action="{% url 'scaffold_templates:add_file' form.instance.template.user.username form.instance.template.slug %}">
+      {% csrf_token %}
+      {% include 'forms/includes/hidden_fields.html' %}
+      {% render_field form.name class='form-control input-sm' style='width: 250px' %}
+    </form>
+  </td>
+</tr>

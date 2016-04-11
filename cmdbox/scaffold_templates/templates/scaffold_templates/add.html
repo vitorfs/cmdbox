@@ -21,6 +21,11 @@
   </script>
 {% endblock %}
 
+{% block breadcrumb %}
+  <li><a href="{% url 'scaffold_templates' %}">{% trans 'Scaffold templates' %}</a></li>
+  <li class="active">{% trans 'Add' %}</li>
+{% endblock %}
+
 {% block content_header %}
   <div class="row">
     <div class="col-md-8 col-md-offset-2">

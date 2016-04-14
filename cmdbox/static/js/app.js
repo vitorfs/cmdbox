@@ -13,6 +13,10 @@
       $("[data-toggle='tooltip']").tooltip();
     },
 
+    getCSRF: function () {
+      return $("meta[name='csrf']").attr("content");
+    },
+
     slug: function (str) {
       str = str.replace(/^\s+|\s+$/g, ''); // trim
       str = str.toLowerCase();
@@ -39,6 +43,23 @@
     stopLoading: function () {
       $(".loading").hide();
       $("body").css("overflow", "scroll");
+    },
+
+    isElementInViewport: function (el) {
+      /* http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433 */
+
+      if (typeof jQuery === "function" && el instanceof jQuery) {
+          el = el[0];
+      }
+
+      var rect = el.getBoundingClientRect();
+
+      return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
     }
 
   };

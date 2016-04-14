@@ -87,6 +87,20 @@ def add_children_file(request, username, slug, folder_id):
 
 
 @login_required
+@require_POST
+def delete_file(request, username, slug, file_id):
+    try:
+        _file = File.objects.get(pk=file_id, template__user__username=username, template__slug=slug)
+        _file.delete()
+        json_context = dict()
+        files = _file.template.files.all()
+        json_context['html'] = walk(files)
+        json_context['itemsCount'] = files.count()
+        return HttpResponse(json.dumps(json_context), content_type='application/json')
+    except File.DoesNotExist:
+        return HttpResponseBadRequest()
+
+@login_required
 def edit(request, username, slug):
     scaffold_template = get_object_or_404(ScaffoldTemplate, user__username=username, slug=slug)
     if request.method == 'POST':

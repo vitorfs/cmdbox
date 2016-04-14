@@ -55,7 +55,15 @@
           <li><a href="#"><span class="glyphicon glyphicon-duplicate"></span> {% trans 'Duplicate' %}</a></li>
           <li role="separator" class="divider"></li>
           <li><a href="#"><span class="glyphicon glyphicon-pencil"></span> {% trans 'Rename' %}</a></li>
-          <li><a href="#"><span class="glyphicon glyphicon-trash"></span> {% trans 'Delete' %}</a></li>
+          <li>
+            <a href="javascript:void(0);"
+               class="js-delete-file"
+               data-file-id="{{ file.pk }}"
+               data-url="{% url 'scaffold_templates:delete_file' file.template.user.username file.template.slug file.pk %}">
+              <span class="glyphicon glyphicon-trash"></span>
+              {% trans 'Delete' %}
+            </a>
+          </li>
         </ul>
       </div>
     </td>

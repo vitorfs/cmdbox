@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+)/$', views.details, name='details'),
     url(r'^(?P<slug>[^/]+)/add-file/$', views.add_file, name='add_file'),
     url(r'^(?P<slug>[^/]+)/(?P<folder_id>\d+)/add-file/$', views.add_children_file, name='add_children_file'),
+    url(r'^(?P<slug>[^/]+)/(?P<file_id>\d+)/delete-file/$', views.delete_file, name='delete_file'),
     url(r'^(?P<slug>[^/]+)/edit/$', views.edit, name='edit'),
     url(r'^(?P<slug>[^/]+)/delete/$', views.delete, name='delete'),
 ]

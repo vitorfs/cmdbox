@@ -1,0 +1,13 @@
+.toggle-folder {
+  width: 18px;
+  font-size: 10px;
+  vertical-align: middle!important;
+  display: inline-block;
+}
+
+#table-files tbody tr td {
+  -webkit-transition: all 0.2s ease 0s;
+     -moz-transition: all 0.2s ease 0s;
+       -o-transition: all 0.2s ease 0s;
+          transition: all 0.2s ease 0s;
+}

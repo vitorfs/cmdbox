@@ -1,94 +1,13 @@
 {% extends 'base.html' %}
 
-{% load i18n filewalker %}
+{% load filewalker i18n static %}
 
 {% block stylesheet %}
-  <style type="text/css">
-    .toggle-folder {
-      width: 18px;
-      font-size: 10px;
-      vertical-align: middle!important;
-      display: inline-block;
-    }
-
-    #table-files tbody tr td {
-      -webkit-transition: all 0.2s ease 0s;
-         -moz-transition: all 0.2s ease 0s;
-           -o-transition: all 0.2s ease 0s;
-              transition: all 0.2s ease 0s;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'scaffold_templates/css/details.css' %}">
 {% endblock %}
 
 {% block javascript %}
-  <script>
-    $(function () {
-      $("main").on("click", ".js-add-file", function () {
-        var url = $(this).attr("data-url");
-        var folder_id = $(this).attr("data-folder-id");
-
-        $.ajax({
-          url: url,
-          type: 'get',
-          cache: false,
-          beforeSend: function () {
-            $.cmdbox.loading();
-          },
-          success: function (data) {
-            if (folder_id === undefined) {
-              $("#table-files tbody").prepend(data.form);
-              $("#form-add-file").closest("td").css("padding-left", "26px");
-            }
-            else {
-              var parent = $("#table-files tbody tr[data-id='" + folder_id + "']");
-              var depth = parseInt($(parent).attr("data-depth"));
-              var padding = (26 + ((depth + 1) * 24));
-              $(parent).after(data.form);
-              $("#form-add-file").closest("td").css("padding-left", padding + "px");
-            }
-            $("#id_add_file-name").focus();
-            $("#id_add_file-name").select();
-          },
-          complete: function () {
-            $.cmdbox.stopLoading();
-          }
-        });
-      });
-
-      var saveFile = function () {
-        $.ajax({
-          url: $("#form-add-file").attr("action"),
-          data: $("#form-add-file").serialize(),
-          type: 'post',
-          beforeSend: function () {
-            $.cmdbox.loading();
-          },
-          success: function (data) {
-            if (data.is_valid) {
-              $("#table-files tbody").html(data.html);
-              var row = $("#table-files tbody tr[data-id='" + data.file + "']");
-              $(row).addClass("info");
-              setTimeout(function () {
-                $(row).removeClass("info");
-              }, 500)
-            }
-            else {
-              $("#form-add-file").closest("tr").replaceWith(data.form);
-            }
-          },
-          complete: function () {
-            $.cmdbox.stopLoading();
-          }
-        });
-        return false;
-      };
-
-      $("#table-files").on("blur", "#id_add_file-name", saveFile);
-
-      $("#table-files").on("submit", "#form-add-file", saveFile);
-
-    });
-  </script>
+  <script src="{% static 'scaffold_templates/js/details.js' %}"></script>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -113,7 +32,6 @@
 {% endblock %}
 
 {% block content %}
-
   <div class="btn-group btn-group-justified" role="group" aria-label="..." style="margin-bottom: 20px">
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-sm btn-primary">
@@ -180,7 +98,7 @@
       </tbody>
     </table>
     <div class="panel-footer">
-      {{ scaffold_template.files.count }} {% trans 'items' %}
+      <span class="items-count">{{ scaffold_template.files.count }}</span> {% trans 'items' %}
     </div>
   </div>
 {% endblock %}

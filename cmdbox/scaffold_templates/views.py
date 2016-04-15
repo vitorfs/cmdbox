@@ -100,6 +100,7 @@ def delete_file(request, username, slug, file_id):
     except File.DoesNotExist:
         return HttpResponseBadRequest()
 
+
 @login_required
 def edit(request, username, slug):
     scaffold_template = get_object_or_404(ScaffoldTemplate, user__username=username, slug=slug)

@@ -91,23 +91,29 @@ $(function () {
 
   var deleteFile = function () {
     var btn = $(this);
-    $.ajax({
-      url: $(btn).attr("data-url"),
-      data: {
-        'csrfmiddlewaretoken': $.cmdbox.getCSRF()
-      },
-      type: 'post',
-      beforeSend: function () {
-        $.cmdbox.loading();
-      },
-      success: function (data) {
-        $("#table-files tbody").html(data.html);
-        $(".items-count").text(data.itemsCount);
-      },
-      complete: function () {
-        $.cmdbox.stopLoading();
-      }
+    var title = $(this).attr("data-confirm-title");
+    var message = $(this).attr("data-confirm-message");
+
+    $.cmdbox.confirm(title, message, function () {
+      $.ajax({
+        url: $(btn).attr("data-url"),
+        data: {
+          'csrfmiddlewaretoken': $.cmdbox.getCSRF()
+        },
+        type: 'post',
+        beforeSend: function () {
+          $.cmdbox.loading();
+        },
+        success: function (data) {
+          $("#table-files tbody").html(data.html);
+          $(".items-count").text(data.itemsCount);
+        },
+        complete: function () {
+          $.cmdbox.stopLoading();
+        }
+      });
     });
+
   };
 
 

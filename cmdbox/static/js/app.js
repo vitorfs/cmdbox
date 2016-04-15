@@ -10,6 +10,20 @@
         $(this).val(slug);
       };
 
+      $.fn.renderDialog = function (title, message) {
+        $(this).find(".modal-title, .modal-body").empty();
+        $(".modal-title", this).text(title);
+        if ($.isArray(message)) {
+          $.each(message, function (index, value) {
+            $("</p>").text(value).appendTo(".modal-body", this);
+          });
+        }
+        else {
+          $("</p>").text(message).appendTo(".modal-body", this);
+        }
+        $(this).modal();
+      };
+
       $("[data-toggle='tooltip']").tooltip();
     },
 
@@ -60,6 +74,27 @@
           rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
           rect.right <= (window.innerWidth || document.documentElement.clientWidth)
       );
+    },
+
+    alert: function (title, message) {
+      $("#modal-alert").renderDialog(title, message);
+    },
+
+    confirm: function (title, message, confirmCallback, cancelCallback) {
+      confirmCallback = confirmCallback || function () {};
+      cancelCallback = cancelCallback || function () {};
+
+      $("#modal-confirm-action").unbind("hide.bs.modal");
+      $("#modal-confirm-action").on("hide.bs.modal", cancelCallback);
+
+      var confirmCallbackWrapper = function () {
+        $("#modal-confirm-action").unbind("hide.bs.modal");
+        $("#modal-confirm-action").modal("hide");
+        confirmCallback();
+      };
+
+      $("#modal-confirm-action .js-confirm-action").unbind("click").bind("click", confirmCallbackWrapper);
+      $("#modal-confirm-action").renderDialog(title, message);
     }
 
   };

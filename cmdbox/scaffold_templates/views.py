@@ -59,8 +59,16 @@ def _add_file(request, file_instance):
             json_context['html'] = walk(_file.template.files.all())
             return HttpResponse(json.dumps(json_context), content_type='application/json')
     else:
-        form = CreateFileForm(prefix='add_file', instance=file_instance, initial={'name': _('untitled file')})
-    context = RequestContext(request, {'form': form})
+        initial_name = _('untitled {0}').format(file_instance.get_file_type_display().lower())
+        form = CreateFileForm(prefix='add_file', instance=file_instance, initial={'name': initial_name})
+
+    template = file_instance.template
+    if file_instance.file_type == File.FILE:
+        reverse_url = reverse('scaffold_templates:add_file', args=(template.user.username, template.slug))
+    else:
+        reverse_url = reverse('scaffold_templates:add_folder', args=(template.user.username, template.slug))
+
+    context = RequestContext(request, {'form': form, 'reverse_url': reverse_url})
     json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
     return HttpResponse(json.dumps(json_context), content_type='application/json')
 
@@ -69,19 +77,40 @@ def _add_file(request, file_instance):
 def add_file(request, username, slug):
     try:
         scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
-        file_instance = File(template=scaffold_template)
+        file_instance = File(template=scaffold_template, file_type=File.FILE)
         return _add_file(request, file_instance)
     except ScaffoldTemplate.DoesNotExist:
         return HttpResponseBadRequest()
 
 
 @login_required
-def add_children_file(request, username, slug, folder_id):
+def add_children_file(request, username, slug, parent_folder_id):
     try:
         scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
-        folder = File.objects.get(pk=folder_id, template=scaffold_template)
-        file_instance = File(template=scaffold_template, folder=folder)
+        parent_folder = File.objects.get(pk=parent_folder_id, template=scaffold_template)
+        file_instance = File(template=scaffold_template, file_type=File.FILE, folder=parent_folder)
         return _add_file(request, file_instance)
+    except (ScaffoldTemplate.DoesNotExist, File.DoesNotExist):
+        return HttpResponseBadRequest()
+
+
+@login_required
+def add_folder(request, username, slug):
+    try:
+        scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
+        folder_instance = File(template=scaffold_template, file_type=File.FOLDER)
+        return _add_file(request, folder_instance)
+    except ScaffoldTemplate.DoesNotExist:
+        return HttpResponseBadRequest()
+
+
+@login_required
+def add_children_folder(request, username, slug, parent_folder_id):
+    try:
+        scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
+        parent_folder = File.objects.get(pk=parent_folder_id, template=scaffold_template)
+        folder_instance = File(template=scaffold_template, file_type=File.FOLDER, folder=parent_folder)
+        return _add_file(request, folder_instance)
     except (ScaffoldTemplate.DoesNotExist, File.DoesNotExist):
         return HttpResponseBadRequest()
 

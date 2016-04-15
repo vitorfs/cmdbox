@@ -79,7 +79,9 @@ $(function () {
 
         }
         else {
+          var padding = $("#form-add-file").closest("td").css("padding-left");
           $("#form-add-file").closest("tr").replaceWith(data.form);
+          $("#form-add-file").closest("td").css("padding-left", padding);
         }
       },
       complete: function () {

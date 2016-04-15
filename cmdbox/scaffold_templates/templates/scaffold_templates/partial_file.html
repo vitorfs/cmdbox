@@ -37,7 +37,10 @@
           <li role="separator" class="divider"></li>
           {% if file.is_folder %}
             <li>
-              <a href="#">
+              <a href="javascript:void(0);"
+                 class="js-add-file"
+                 data-folder-id="{{ file.pk }}"
+                 data-url="{% url 'scaffold_templates:add_children_folder' file.template.user.username file.template.slug file.pk %}">
                 <span class="glyphicon glyphicon-folder-close"></span>
                 {% trans 'Add folder' %}
               </a>

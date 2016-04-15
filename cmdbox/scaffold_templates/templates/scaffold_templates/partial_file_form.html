@@ -1,11 +1,16 @@
 {% load widget_tweaks %}
 
 <tr>
-  <td colspan="5">
-    <form id="form-add-file" method="post" action="{% url 'scaffold_templates:add_file' form.instance.template.user.username form.instance.template.slug %}">
+  <td colspan="5"{% if form.name.errors %} class="has-error"{% endif %}>
+    <form id="form-add-file"
+          method="post"
+          action="{{ reverse_url }}">
       {% csrf_token %}
       {% include 'forms/includes/hidden_fields.html' %}
-      {% render_field form.name class='form-control input-sm' style='width: 250px' %}
+      {% render_field form.name class='form-control input-sm' style='width: 250px; display: inline-block' %}
+      {% for error in form.name.errors %}
+        <span class="help-block" style="display: inline">{{ error }}</span>
+      {% endfor %}
     </form>
   </td>
 </tr>

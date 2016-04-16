@@ -38,3 +38,11 @@ class CreateFileForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ('name', 'folder', 'template', )
+
+
+class RenameFileForm(forms.ModelForm):
+    id = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
+        model = File
+        fields = ('id', 'name')

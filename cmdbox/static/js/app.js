@@ -4,12 +4,15 @@
 
   $.cmdbox = {
     init: function () {
+
+      /* Slugify helper function */
       $.fn.slugify = function () {
         var str = $(this).val()
         var slug = $.cmdbox.slug(str);
         $(this).val(slug);
       };
 
+      /* Bootstrap modal renderer */
       $.fn.renderDialog = function (title, message) {
         $(this).find(".modal-title, .modal-body").empty();
         $(".modal-title", this).text(title);
@@ -24,11 +27,28 @@
         $(this).modal();
       };
 
+      /* Activate tooltip plugin */
       $("[data-toggle='tooltip']").tooltip();
-    },
 
-    getCSRF: function () {
-      return $("meta[name='csrf']").attr("content");
+      /* CSRF protection for AJAX request */
+      var csrfSafeMethod = function (method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      };
+
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+          var csrftoken = Cookies.get("csrftoken");
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+          $.cmdbox.loading();
+        },
+        complete: function () {
+          $.cmdbox.stopLoading();
+        }
+      });
+
     },
 
     slug: function (str) {

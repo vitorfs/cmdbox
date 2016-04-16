@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf" content="{{ csrf_token }}">
     <title>{% block title %}CmdBox{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
@@ -93,6 +92,7 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/expanding.js' %}"></script>
+    <script src="{% static 'js/js.cookie-2.1.1.min.js' %}"></script>
     <script src="{% static 'js/app.js' %}"></script>
     <script>
       $(function () {

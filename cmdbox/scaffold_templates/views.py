@@ -6,12 +6,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse, HttpResponseBadRequest, Http404
-from django.template import RequestContext
+from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from cmdbox.scaffold_templates.models import ScaffoldTemplate, File
-from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, CreateFileForm
+from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, CreateFileForm, \
+    RenameFileForm
 from cmdbox.scaffold_templates.templatetags.filewalker import walk
 
 
@@ -38,6 +40,7 @@ def scaffold_templates(request, username):
     return render(request, 'scaffold_templates/list.html', {'page_user': user})
 
 
+@ensure_csrf_cookie
 def details(request, username, slug):
     try:
         scaffold_template = ScaffoldTemplate \
@@ -49,18 +52,25 @@ def details(request, username, slug):
 
 
 def _add_file(request, file_instance):
+    depth = request.GET.get('depth', 0)
+
     json_context = dict()
+
     if request.method == 'POST':
-        form = CreateFileForm(request.POST, prefix='add_file', instance=file_instance)
+        form = CreateFileForm(request.POST, instance=file_instance)
         is_valid = json_context['is_valid'] = form.is_valid()
         if is_valid:
             _file = form.save()
+            files = _file.template.files.all()
+
             json_context['file'] = _file.pk
-            json_context['html'] = walk(_file.template.files.all())
+            json_context['html'] = walk(files)
+            json_context['itemsCount'] = files.count()
+
             return HttpResponse(json.dumps(json_context), content_type='application/json')
     else:
         initial_name = _('untitled {0}').format(file_instance.get_file_type_display().lower())
-        form = CreateFileForm(prefix='add_file', instance=file_instance, initial={'name': initial_name})
+        form = CreateFileForm(instance=file_instance, initial={'name': initial_name})
 
     template = file_instance.template
     if file_instance.file_type == File.FILE:
@@ -68,7 +78,7 @@ def _add_file(request, file_instance):
     else:
         reverse_url = reverse('scaffold_templates:add_folder', args=(template.user.username, template.slug))
 
-    context = RequestContext(request, {'form': form, 'reverse_url': reverse_url})
+    context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
     json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
     return HttpResponse(json.dumps(json_context), content_type='application/json')
 
@@ -84,10 +94,10 @@ def add_file(request, username, slug):
 
 
 @login_required
-def add_children_file(request, username, slug, parent_folder_id):
+def add_children_file(request, username, slug, file_id):
     try:
         scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
-        parent_folder = File.objects.get(pk=parent_folder_id, template=scaffold_template)
+        parent_folder = File.objects.get(pk=file_id, template=scaffold_template)
         file_instance = File(template=scaffold_template, file_type=File.FILE, folder=parent_folder)
         return _add_file(request, file_instance)
     except (ScaffoldTemplate.DoesNotExist, File.DoesNotExist):
@@ -105,13 +115,53 @@ def add_folder(request, username, slug):
 
 
 @login_required
-def add_children_folder(request, username, slug, parent_folder_id):
+def add_children_folder(request, username, slug, file_id):
     try:
         scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
-        parent_folder = File.objects.get(pk=parent_folder_id, template=scaffold_template)
+        parent_folder = File.objects.get(pk=file_id, template=scaffold_template)
         folder_instance = File(template=scaffold_template, file_type=File.FOLDER, folder=parent_folder)
         return _add_file(request, folder_instance)
     except (ScaffoldTemplate.DoesNotExist, File.DoesNotExist):
+        return HttpResponseBadRequest()
+
+
+@login_required
+def rename_file(request, username, slug, file_id):
+    _file = get_object_or_404(File, pk=file_id, template__user__username=username, template__slug=slug)
+    depth = request.GET.get('depth', 0)
+
+    json_context = dict()
+
+    if request.method == 'POST':
+        form = RenameFileForm(request.POST, instance=_file)
+        is_valid = json_context['is_valid'] = form.is_valid()
+        if is_valid:
+            _file = form.save()
+            json_context['file'] = _file.pk
+            json_context['html'] = walk(_file.template.files.all())
+            return HttpResponse(json.dumps(json_context), content_type='application/json')
+    else:
+        form = RenameFileForm(instance=_file)
+
+    template = _file.template
+    reverse_url = reverse('scaffold_templates:rename_file', args=(template.user.username, template.slug, _file.pk))
+    context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
+    json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
+    return HttpResponse(json.dumps(json_context), content_type='application/json')
+
+
+@login_required
+@require_POST
+def duplicate_file(request, username, slug, file_id):
+    try:
+        _file = File.objects.get(pk=file_id, template__user__username=username, template__slug=slug)
+        _file.duplicate()
+        json_context = dict()
+        files = _file.template.files.all()
+        json_context['html'] = walk(files)
+        json_context['itemsCount'] = files.count()
+        return HttpResponse(json.dumps(json_context), content_type='application/json')
+    except File.DoesNotExist:
         return HttpResponseBadRequest()
 
 

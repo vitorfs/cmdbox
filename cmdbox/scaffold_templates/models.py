@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import os.path
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -42,5 +43,37 @@ class File(models.Model):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.extension = os.path.splitext(self.name)[1][1:].strip()[:10]
+        return super(File, self).save(args, kwargs)
+
     def is_folder(self):
         return self.file_type == File.FOLDER
+
+    def duplicate(self):
+        copy = self
+        copy.pk = None
+        base_name, extension = os.path.splitext(self.name)
+        base_copy_text = _('copy')
+
+        copy_text = ' {0}'.format(base_copy_text)
+        name = ''
+        copy_number = 1
+        while True:
+            if len(extension) > 11:
+                max_length = 255 - len(copy_text)
+                name = '{0}{1}'.format(self.name[:max_length], extension)
+            else:
+                max_length = 255 - len(extension) - len(copy_text)
+                name = '{0}{1}{2}'.format(base_name[:max_length], copy_text, extension)
+
+            if not File.objects.filter(name=name, template=self.template, folder=self.folder).exists():
+                break
+            else:
+                copy_number += 1
+                copy_text = ' {0} {1}'.format(base_copy_text, copy_number)
+
+        copy.name = name
+        copy.save()
+        return copy
+

@@ -11,3 +11,8 @@
        -o-transition: all 0.2s ease 0s;
           transition: all 0.2s ease 0s;
 }
+
+#table-files .file-icon {
+  color: #14a6d8;
+  margin-right: 8px;
+}

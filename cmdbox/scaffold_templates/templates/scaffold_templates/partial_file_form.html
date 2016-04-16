@@ -1,16 +1,33 @@
 {% load widget_tweaks %}
 
-<tr>
-  <td colspan="5"{% if form.name.errors %} class="has-error"{% endif %}>
-    <form id="form-add-file"
+{% widthratio depth 1 24 as padding %}
+
+{% spaceless %}
+<tr data-id="{{ form.instance.pk|default_if_none:'' }}"
+    data-parent="{{ form.instance.folder.pk|default_if_none:'' }}"
+    data-depth="{{ depth }}">
+  <td colspan="5"{% if form.name.errors %} class="has-error"{% endif %}
+      style="padding-left: {{ padding|add:8 }}px">
+    <span class="toggle-folder">
+      {% if form.instance.is_folder %}
+        <span class="glyphicon glyphicon-triangle-right text-muted"></span>
+      {% endif %}
+    </span>
+    {% if form.instance.is_folder %}
+      <span class="glyphicon glyphicon-folder-close file-icon"></span>
+    {% else %}
+      <span class="glyphicon glyphicon-file file-icon"></span>
+    {% endif %}
+    <form id="form-file"
           method="post"
-          action="{{ reverse_url }}">
-      {% csrf_token %}
+          action="{{ reverse_url }}?depth={{ depth }}"
+          style="display: inline">
       {% include 'forms/includes/hidden_fields.html' %}
-      {% render_field form.name class='form-control input-sm' style='width: 250px; display: inline-block' %}
+      {% render_field form.name class='form-control input-sm' style='width: 250px; display: inline-block; margin-right: 8px' %}
       {% for error in form.name.errors %}
         <span class="help-block" style="display: inline">{{ error }}</span>
       {% endfor %}
     </form>
   </td>
 </tr>
+{% endspaceless %}

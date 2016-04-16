@@ -4,33 +4,53 @@ $(function () {
   /* Functions                                                               */
   /***************************************************************************/
 
-  var loadFileForm = function () {
+  var loadAddFileForm = function () {
     var url = $(this).attr("data-url");
     var folder_id = $(this).attr("data-folder-id");
+    var has_parent = folder_id !== undefined;
+
+    var depth = 0;
+    if (has_parent) {
+      var parent = $(this).closest("tr");
+      var parent_depth = parseInt($(parent).attr("data-depth"));
+      depth = parent_depth + 1;
+    }
+
     $.ajax({
       url: url,
       type: 'get',
-      cache: false,
-      beforeSend: function () {
-        $.cmdbox.loading();
+      data: {
+        'depth': depth
       },
+      cache: false,
       success: function (data) {
-        if (folder_id === undefined) {
-          $("#table-files tbody").prepend(data.form);
-          $("#form-add-file").closest("td").css("padding-left", "26px");
+        if (has_parent) {
+          $(parent).after(data.form);
         }
         else {
-          var parent = $("#table-files tbody tr[data-id='" + folder_id + "']");
-          var depth = parseInt($(parent).attr("data-depth"));
-          var padding = (26 + ((depth + 1) * 24));
-          $(parent).after(data.form);
-          $("#form-add-file").closest("td").css("padding-left", padding + "px");
+          $("#table-files tbody").prepend(data.form);
         }
-        $("#id_add_file-name").focus();
-        $("#id_add_file-name").select();
+        $("#id_name").focus();
+        $("#id_name").select();
+      }
+    });
+  };
+
+  var loadRenameFileForm = function () {
+    var row = $(this).closest("tr");
+    var depth = $(row).attr("data-depth");
+    var url = $(this).attr("data-url");
+    $.ajax({
+      url: url,
+      type: 'get',
+      data: {
+        'depth': depth
       },
-      complete: function () {
-        $.cmdbox.stopLoading();
+      cache: false,
+      success: function (data) {
+        $(row).replaceWith(data.form);
+        $("#id_name").focus();
+        $("#id_name").select();
       }
     });
   };
@@ -46,46 +66,42 @@ $(function () {
       apply the css class.
       If the form wasn't valid, replace the form with the validated form displaying the errors.
       On complete, reset the application loading state.
+      The script returns false to avoid the #form-file to be actually submitted.
     */
     $.ajax({
-      url: $("#form-add-file").attr("action"),
-      data: $("#form-add-file").serialize(),
+      url: $("#form-file").attr("action"),
+      data: $("#form-file").serialize(),
       type: 'post',
-      beforeSend: function () {
-        $.cmdbox.loading();
-      },
       success: function (data) {
         if (data.is_valid) {
+
           $("#table-files tbody").html(data.html);
+          $(".items-count").text(data.itemsCount);
+
           var row = $("#table-files tbody tr[data-id='" + data.file + "']");
           $(row).addClass("info");
-          var removeFeaturedRow = function () {
+          var removeFeaturedClass = function () {
             setTimeout(function () {
               $(row).removeClass("info");
             }, 500)
           };
 
           if ($.cmdbox.isElementInViewport(row)) {
-            removeFeaturedRow();
+            removeFeaturedClass();
           }
           else {
             var options = {
               scrollTop: $(row).offset().top
             };
             var duration = 500;
-            var callback = removeFeaturedRow;
+            var callback = removeFeaturedClass;
             $("html, body").animate(options, duration, callback);
           }
 
         }
         else {
-          var padding = $("#form-add-file").closest("td").css("padding-left");
-          $("#form-add-file").closest("tr").replaceWith(data.form);
-          $("#form-add-file").closest("td").css("padding-left", padding);
+          $("#form-file").closest("tr").replaceWith(data.form);
         }
-      },
-      complete: function () {
-        $.cmdbox.stopLoading();
       }
     });
     return false;
@@ -99,23 +115,26 @@ $(function () {
     $.cmdbox.confirm(title, message, function () {
       $.ajax({
         url: $(btn).attr("data-url"),
-        data: {
-          'csrfmiddlewaretoken': $.cmdbox.getCSRF()
-        },
         type: 'post',
-        beforeSend: function () {
-          $.cmdbox.loading();
-        },
         success: function (data) {
           $("#table-files tbody").html(data.html);
           $(".items-count").text(data.itemsCount);
-        },
-        complete: function () {
-          $.cmdbox.stopLoading();
         }
       });
     });
 
+  };
+
+  var duplicateFile = function () {
+    var url = $(this).attr("data-url");
+    $.ajax({
+      url: url,
+      type: 'post',
+      success: function (data) {
+        $("#table-files tbody").html(data.html);
+        $(".items-count").text(data.itemsCount);
+      }
+    });
   };
 
 
@@ -124,11 +143,15 @@ $(function () {
   /***************************************************************************/
 
   /* Add files/folders */
-  $("main").on("click", ".js-add-file", loadFileForm);
-  $("#table-files").on("blur", "#id_add_file-name", saveFile);
-  $("#table-files").on("submit", "#form-add-file", saveFile);
+  $("main").on("click", ".js-add-file", loadAddFileForm);
+  $("main").on("click", ".js-rename-file", loadRenameFileForm);
+  //$("#table-files").on("blur", "#id_name", saveFile);
+  $("#table-files").on("submit", "#form-file", saveFile);
 
   /* Delete files/folders */
   $("main").on("click", ".js-delete-file", deleteFile);
+
+  /* Duplicate files/folders */
+  $("main").on("click", ".js-duplicate-file", duplicateFile);
 
 });

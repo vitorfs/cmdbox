@@ -55,6 +55,35 @@ $(function () {
     });
   };
 
+  var addFeaturedClass = function (id, children) {
+    children = children || new Array();
+    var row = $("#table-files tbody tr[data-id='" + id + "']");
+    $(row).addClass("info");
+    $(children).each(function () {
+      $(this).addClass("info");
+    });
+    var removeFeaturedClass = function () {
+      setTimeout(function () {
+        $(row).removeClass("info");
+        $(children).each(function () {
+          $(this).removeClass("info");
+        });
+      }, 500)
+    };
+
+    if ($.cmdbox.isElementInViewport(row)) {
+      removeFeaturedClass();
+    }
+    else {
+      var options = {
+        scrollTop: $(row).offset().top
+      };
+      var duration = 500;
+      var callback = removeFeaturedClass;
+      $("html, body").animate(options, duration, callback);
+    }
+  };
+
   var saveFile = function () {
     /*
       Serialize the form CreateFileForm and post it to the defined reversed url.
@@ -74,30 +103,9 @@ $(function () {
       type: 'post',
       success: function (data) {
         if (data.is_valid) {
-
           $("#table-files tbody").html(data.html);
           $(".items-count").text(data.itemsCount);
-
-          var row = $("#table-files tbody tr[data-id='" + data.file + "']");
-          $(row).addClass("info");
-          var removeFeaturedClass = function () {
-            setTimeout(function () {
-              $(row).removeClass("info");
-            }, 500)
-          };
-
-          if ($.cmdbox.isElementInViewport(row)) {
-            removeFeaturedClass();
-          }
-          else {
-            var options = {
-              scrollTop: $(row).offset().top
-            };
-            var duration = 500;
-            var callback = removeFeaturedClass;
-            $("html, body").animate(options, duration, callback);
-          }
-
+          addFeaturedClass(data.file);
         }
         else {
           $("#form-file").closest("tr").replaceWith(data.form);
@@ -133,6 +141,29 @@ $(function () {
       success: function (data) {
         $("#table-files tbody").html(data.html);
         $(".items-count").text(data.itemsCount);
+
+        var collectChildrends = false;
+        var parentDepth = -1;
+        var children = new Array();
+        $("table tbody tr").each(function () {
+          if (collectChildrends) {
+            var depth = parseInt($(this).attr("data-depth"));
+            if (depth === parentDepth) {
+              return false;
+            }
+            else {
+              children.push($(this));
+            }
+          }
+          if ($(this).attr("data-id") === data.file.toString()) {
+            parentDepth = parseInt($(this).attr("data-depth"));
+            collectChildrends = true;
+          }
+        });
+
+        console.log(children);
+        addFeaturedClass(data.file, children);
+
       }
     });
   };

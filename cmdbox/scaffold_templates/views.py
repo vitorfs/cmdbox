@@ -151,13 +151,16 @@ def rename_file(request, username, slug, file_id):
 
 
 @login_required
-@require_POST
 def duplicate_file(request, username, slug, file_id):
     try:
-        _file = File.objects.get(pk=file_id, template__user__username=username, template__slug=slug)
-        _file.duplicate()
+        scaffold_template = ScaffoldTemplate.objects.get(user__username=username, slug=slug)
+        _file = File.objects.get(pk=file_id, template=scaffold_template)
+
+        duplicated_file = _file.duplicate()
+        files = scaffold_template.files.all()
+
         json_context = dict()
-        files = _file.template.files.all()
+        json_context['file'] = duplicated_file.pk
         json_context['html'] = walk(files)
         json_context['itemsCount'] = files.count()
         return HttpResponse(json.dumps(json_context), content_type='application/json')

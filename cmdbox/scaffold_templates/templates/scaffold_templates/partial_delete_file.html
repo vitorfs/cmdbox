@@ -1,0 +1,32 @@
+{% load i18n %}
+<form id="form-delete-file"
+      method="post"
+      action="{% url 'scaffold_templates:delete_file' file.template.user.username file.template.slug file.pk %}"
+      data-async="true"
+      data-before-send="deleteFileBeforeSend"
+      data-success="deleteFileSuccess">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{% trans 'Are you sure?' %}</h4>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        <p>
+          {% blocktrans trimmed with type=file.get_file_type_display name=file.name %}
+            Confirm the removal of the {{ type }} <strong>{{ name }}</strong>?
+          {% endblocktrans %}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</button>
+        <button type="submit" class="btn btn-primary">
+          {% trans 'Confirm' %}
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

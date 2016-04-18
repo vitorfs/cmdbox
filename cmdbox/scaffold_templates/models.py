@@ -22,8 +22,8 @@ class File(models.Model):
     FILE = 1
     FOLDER = 2
     FILE_TYPES = (
-        (FILE, _('File')),
-        (FOLDER, _('Folder'))
+        (FILE, _('file')),
+        (FOLDER, _('folder'))
     )
 
     name = models.CharField(_('name'), max_length=255)

@@ -27,6 +27,18 @@
         $(this).modal();
       };
 
+      /* Add stripped lines */
+      $.fn.stripTable = function () {
+        $("tbody tr:visible", this).each(function (index) {
+          if (index % 2 == 0) {
+            $(this).removeClass("odd").addClass("even");
+          }
+          else {
+            $(this).removeClass("even").addClass("odd");
+          }
+        });
+      };
+
       /* Activate tooltip plugin */
       $("[data-toggle='tooltip']").tooltip();
 
@@ -38,15 +50,53 @@
 
       $.ajaxSetup({
         beforeSend: function(xhr, settings) {
+          $.cmdbox.loading();
           var csrftoken = Cookies.get("csrftoken");
           if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
           }
-          $.cmdbox.loading();
         },
         complete: function () {
           $.cmdbox.stopLoading();
         }
+      });
+
+      /* Async Form Setup */
+      $.fn.getCallbackFunction = function (attrName) {
+        var formId = $(this).attr("id");
+        var functionName = $(this).attr(attrName);
+        if (functionName !== undefined) {
+          var callbackFunction = "#" + formId + ":" + functionName;
+          return $.cmdbox.fn[callbackFunction];
+        }
+      };
+
+      $("body").on("submit", "[data-async='true']", function () {
+        var form = $(this);
+
+        $.ajax({
+          url: $(form).attr("action"),
+          type: $(form).attr("method"),
+          data: $(form).serialize(),
+          beforeSend: function(xhr, settings) {
+            var csrftoken = Cookies.get("csrftoken");
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            var callback = $(form).getCallbackFunction("data-before-send");
+            if (callback !== undefined) {
+              callback();
+            }
+            $.cmdbox.loading();
+          },
+          success: function (data) {
+            var callback = $(form).getCallbackFunction("data-success");
+            if (callback !== undefined) {
+              callback(data);
+            }
+          }
+        });
+        return false;
       });
 
     },
@@ -115,7 +165,9 @@
 
       $("#modal-confirm-action .js-confirm-action").unbind("click").bind("click", confirmCallbackWrapper);
       $("#modal-confirm-action").renderDialog(title, message);
-    }
+    },
+
+    fn: new Array()
 
   };
 

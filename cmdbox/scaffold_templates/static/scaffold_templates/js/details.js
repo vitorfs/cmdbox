@@ -1,9 +1,101 @@
 $(function () {
 
   /***************************************************************************/
-  /* Functions                                                               */
+  /* Support Functions (Table Helpers)                                       */
   /***************************************************************************/
 
+  var collectChildren = function (id) {
+    var file = $("tr[data-id='" + id + "']");
+    var children = new Array();
+
+    if ($(file).attr("data-type") === "folder") {
+      var collect = false;
+      var parentDepth = -1;
+      $("#table-files tbody tr").each(function () {
+        var depth = parseInt($(this).attr("data-depth"));
+        if (collect) {
+          if (depth === parentDepth) {
+            collect = false;
+          }
+          else {
+            children.push($(this));
+          }
+          return collect;
+        }
+        if ($(this).attr("data-id") === id.toString()) {
+          parentDepth = parseInt($(this).attr("data-depth"));
+          collect = true;
+        }
+      });
+    }
+
+    return children;
+  };
+
+  var addFeaturedClass = function (featuredClass, id, children, removeClassCallback) {
+    children = children || new Array();
+    removeClassCallback = removeClassCallback || function () {};
+
+    var row = $("#table-files tbody tr[data-id='" + id + "']");
+    $(row).addClass(featuredClass);
+    $(children).each(function () {
+      $(this).addClass(featuredClass);
+    });
+    var removeFeaturedClass = function () {
+      setTimeout(function () {
+        $(row).removeClass(featuredClass);
+        $(children).each(function () {
+          $(this).removeClass(featuredClass);
+        });
+        removeClassCallback();
+      }, 500)
+    };
+
+    if ($.cmdbox.isElementInViewport(row)) {
+      removeFeaturedClass();
+    }
+    else {
+      var options = {
+        scrollTop: $(row).offset().top
+      };
+      var duration = 500;
+      var callback = removeFeaturedClass;
+      $("html, body").animate(options, duration, callback);
+    }
+  };
+
+  var toggleFolder = function () {
+    var folder = $(this).closest("tr");
+    var id = $(folder).attr("data-id");
+    var children = collectChildren(id);
+    if ($(folder).attr("data-expanded") === "true") {
+      $(".folder-expand-icon", folder).removeClass("glyphicon-triangle-bottom").addClass("glyphicon-triangle-right");
+      $(".file-icon", folder).removeClass("glyphicon-folder-open").addClass("glyphicon-folder-close");
+      $(folder).attr("data-expanded", "false");
+      $(children).each(function () {
+        $(this).hide();
+      });
+    }
+    else {
+      $(".folder-expand-icon", folder).removeClass("glyphicon-triangle-right").addClass("glyphicon-triangle-bottom");
+      $(".file-icon", folder).removeClass("glyphicon-folder-close").addClass("glyphicon-folder-open");
+      $(folder).attr("data-expanded", "true");
+      $(children).each(function () {
+        var parent = $(this).attr("data-parent");
+        if ($("[data-id='" + parent + "']").attr("data-expanded") === "true") {
+          $(this).show();
+        }
+      });
+    }
+    $("#table-files").stripTable();
+  };
+
+
+  /***************************************************************************/
+  /* Ajax Functions (Form Processing)                                        */
+  /***************************************************************************/
+
+  /* Add file/folder */
   var loadAddFileForm = function () {
     var url = $(this).attr("data-url");
     var folder_id = $(this).attr("data-folder-id");
@@ -32,10 +124,12 @@ $(function () {
         }
         $("#id_name").focus();
         $("#id_name").select();
+        $("#table-files").stripTable();
       }
     });
   };
 
+  /* Rename file/folder */
   var loadRenameFileForm = function () {
     var row = $(this).closest("tr");
     var depth = $(row).attr("data-depth");
@@ -51,39 +145,12 @@ $(function () {
         $(row).replaceWith(data.form);
         $("#id_name").focus();
         $("#id_name").select();
+        $("#table-files").stripTable();
       }
     });
   };
 
-  var addFeaturedClass = function (id, children) {
-    children = children || new Array();
-    var row = $("#table-files tbody tr[data-id='" + id + "']");
-    $(row).addClass("info");
-    $(children).each(function () {
-      $(this).addClass("info");
-    });
-    var removeFeaturedClass = function () {
-      setTimeout(function () {
-        $(row).removeClass("info");
-        $(children).each(function () {
-          $(this).removeClass("info");
-        });
-      }, 500)
-    };
-
-    if ($.cmdbox.isElementInViewport(row)) {
-      removeFeaturedClass();
-    }
-    else {
-      var options = {
-        scrollTop: $(row).offset().top
-      };
-      var duration = 500;
-      var callback = removeFeaturedClass;
-      $("html, body").animate(options, duration, callback);
-    }
-  };
-
+  /* Save file/folder */
   var saveFile = function () {
     /*
       Serialize the form CreateFileForm and post it to the defined reversed url.
@@ -105,7 +172,8 @@ $(function () {
         if (data.is_valid) {
           $("#table-files tbody").html(data.html);
           $(".items-count").text(data.itemsCount);
-          addFeaturedClass(data.file);
+          addFeaturedClass("info", data.file);
+          $("#table-files").stripTable();
         }
         else {
           $("#form-file").closest("tr").replaceWith(data.form);
@@ -115,24 +183,45 @@ $(function () {
     return false;
   };
 
-  var deleteFile = function () {
+  /* Delete file/folder */
+  var loadDeleteFileDialog = function () {
     var btn = $(this);
-    var title = $(this).attr("data-confirm-title");
-    var message = $(this).attr("data-confirm-message");
 
-    $.cmdbox.confirm(title, message, function () {
-      $.ajax({
-        url: $(btn).attr("data-url"),
-        type: 'post',
-        success: function (data) {
-          $("#table-files tbody").html(data.html);
-          $(".items-count").text(data.itemsCount);
-        }
-      });
+    $.ajax({
+      url: $(btn).attr("data-url"),
+      type: 'get',
+      cache: false,
+      beforeSend: function () {
+        $.cmdbox.loading();
+      },
+      success: function (data) {
+        $("#modal-delete-file").html(data.html)
+        $("#modal-delete-file").modal();
+      },
+      complete: function () {
+        $.cmdbox.stopLoading();
+      }
     });
 
   };
 
+  var deleteFileBeforeSend = function () {
+    $("#modal-delete-file").modal('hide');
+  };
+
+  var deleteFileSuccess = function (data) {
+    var children = collectChildren(data.file);
+    addFeaturedClass("danger", data.file, children, function () {
+      $("#table-files tbody tr[data-id='" + data.file + "']").remove();
+      $(children).each(function () {
+        $(this).remove();
+      });
+      $("#table-files").stripTable();
+    });
+    $(".items-count").text(data.itemsCount);
+  };
+
+  /* Duplicate file/folder */
   var duplicateFile = function () {
     var url = $(this).attr("data-url");
     $.ajax({
@@ -142,28 +231,10 @@ $(function () {
         $("#table-files tbody").html(data.html);
         $(".items-count").text(data.itemsCount);
 
-        var collectChildrends = false;
-        var parentDepth = -1;
-        var children = new Array();
-        $("table tbody tr").each(function () {
-          if (collectChildrends) {
-            var depth = parseInt($(this).attr("data-depth"));
-            if (depth === parentDepth) {
-              return false;
-            }
-            else {
-              children.push($(this));
-            }
-          }
-          if ($(this).attr("data-id") === data.file.toString()) {
-            parentDepth = parseInt($(this).attr("data-depth"));
-            collectChildrends = true;
-          }
-        });
+        var children = collectChildren(data.file);
+        addFeaturedClass("info", data.file, children);
 
-        console.log(children);
-        addFeaturedClass(data.file, children);
-
+        $("#table-files").stripTable();
       }
     });
   };
@@ -176,13 +247,28 @@ $(function () {
   /* Add files/folders */
   $("main").on("click", ".js-add-file", loadAddFileForm);
   $("main").on("click", ".js-rename-file", loadRenameFileForm);
-  //$("#table-files").on("blur", "#id_name", saveFile);
   $("#table-files").on("submit", "#form-file", saveFile);
 
   /* Delete files/folders */
-  $("main").on("click", ".js-delete-file", deleteFile);
+  $("main").on("click", ".js-delete-file", loadDeleteFileDialog);
+  $.cmdbox.fn["#form-delete-file:deleteFileBeforeSend"] = deleteFileBeforeSend;
+  $.cmdbox.fn["#form-delete-file:deleteFileSuccess"] = deleteFileSuccess;
 
   /* Duplicate files/folders */
   $("main").on("click", ".js-duplicate-file", duplicateFile);
+
+  /* Expand/Contract folder */
+  $("#table-files").on("click", "tbody tr[data-type='folder'] a.file-name", toggleFolder);
+
+
+  /***************************************************************************/
+  /* Main                                                                    */
+  /***************************************************************************/
+
+  var main = function () {
+    $("#table-files").stripTable();
+  };
+
+  main();
 
 });

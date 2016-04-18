@@ -141,6 +141,14 @@ main {
   color: #777;
 }
 
+.odd {
+  background-color: #f9f9f9;
+}
+
+.even {
+  background-color: #fff;
+}
+
 /* bootstrap reset */
 
 pre {

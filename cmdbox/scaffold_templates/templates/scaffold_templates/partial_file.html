@@ -4,24 +4,38 @@
 
 {% spaceless %}
   <tr data-id="{{ file.pk }}"
+      data-type="{{ file.get_file_type_display }}"
       data-parent="{% if file.folder %}{{ file.folder.pk }}{% endif %}"
-      data-depth="{{ depth }}">
+      data-depth="{{ depth }}"
+      data-expanded="true">
     <td style="padding-left: {{ padding|add:8 }}px">
       <span class="toggle-folder">
         {% if file.is_folder %}
-          <span class="glyphicon glyphicon-triangle-right text-muted"></span>
+          <span class="glyphicon glyphicon-triangle-bottom text-muted folder-expand-icon"></span>
         {% endif %}
       </span>
       {% if file.is_folder %}
-        <span class="glyphicon glyphicon-folder-close file-icon"></span>
+        <span class="glyphicon glyphicon-folder-open file-icon"></span>
       {% else %}
         <span class="glyphicon glyphicon-file file-icon"></span>
       {% endif %}
-      <a href="javascript:void(0);">{{ file.name }}</a>
+      <a href="javascript:void(0);" class="file-name">{{ file.name }}</a>
     </td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td class="text-right">
+      <small class="text-muted">
+        {% if file.is_folder %}
+          --
+        {% else %}
+          {{ file.size }} bytes
+        {% endif %}
+      </small>
+    </td>
+    <td>
+      <small class="text-muted">{{ file.updated_at|date:"M j, Y, H:i" }}</small>
+    </td>
+    <td>
+      <small class="text-muted">{{ file.created_at|date:"M j, Y, H:i" }}</small>
+    </td>
     <td>
       <div class="dropdown">
         <a href="#" id="item-menu-{{ file.pk }}"
@@ -76,10 +90,7 @@
           <li>
             <a href="javascript:void(0);"
                class="js-delete-file"
-               data-file-id="{{ file.pk }}"
-               data-url="{% url 'scaffold_templates:delete_file' file.template.user.username file.template.slug file.pk %}"
-               data-confirm-title="{% trans 'Are you sure?' %}"
-               data-confirm-message="{% blocktrans with type=file.get_file_type_display|lower name=file.name %}Confirm the removal of the {{ type }} {{ name }}?{% endblocktrans %}">
+               data-url="{% url 'scaffold_templates:delete_file' file.template.user.username file.template.slug file.pk %}">
               <span class="glyphicon glyphicon-trash"></span>
               {% trans 'Delete' %}
             </a>

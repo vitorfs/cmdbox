@@ -24,20 +24,20 @@ class EditScaffoldTemplate(forms.ModelForm):
 
 
 class CreateFileForm(forms.ModelForm):
-    folder = forms.ModelChoiceField(
-        widget=forms.HiddenInput(),
-        queryset=File.objects.filter(file_type=File.FOLDER),
-        required=False
-    )
-    template = forms.ModelChoiceField(
-        widget=forms.HiddenInput(),
-        queryset=ScaffoldTemplate.objects.all(),
-        required=False
-    )
-
     class Meta:
         model = File
-        fields = ('name', 'folder', 'template', )
+        fields = ('name', )
+
+    def clean(self):
+        cleaned_data = super(CreateFileForm, self).clean()
+        template = self.instance.template
+        folder = self.instance.folder
+        name = cleaned_data.get('name')
+        if File.objects.filter(template=template, folder=folder, name=name).exists():
+            self.add_error(
+                'name',
+                _('The name "{0}" is already taken. Please choose a different name.').format(name)
+            )
 
 
 class RenameFileForm(forms.ModelForm):

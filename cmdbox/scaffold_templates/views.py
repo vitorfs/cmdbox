@@ -69,15 +69,10 @@ def _add_file(request, file_instance):
 
             return HttpResponse(json.dumps(json_context), content_type='application/json')
     else:
-        initial_name = _('untitled {0}').format(file_instance.get_file_type_display().lower())
+        initial_name = _('untitled {0}').format(file_instance.get_file_type_display())
         form = CreateFileForm(instance=file_instance, initial={'name': initial_name})
 
-    template = file_instance.template
-    if file_instance.file_type == File.FILE:
-        reverse_url = reverse('scaffold_templates:add_file', args=(template.user.username, template.slug))
-    else:
-        reverse_url = reverse('scaffold_templates:add_folder', args=(template.user.username, template.slug))
-
+    reverse_url = request.path
     context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
     json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
     return HttpResponse(json.dumps(json_context), content_type='application/json')

@@ -25,7 +25,7 @@
       {% include 'forms/includes/hidden_fields.html' %}
       {% render_field form.name class='form-control input-sm' style='width: 250px; display: inline-block; margin-right: 8px' %}
       {% for error in form.name.errors %}
-        <span class="help-block" style="display: inline">{{ error }}</span>
+        <small class="help-block" style="display: inline">{{ error }}</small>
       {% endfor %}
     </form>
   </td>

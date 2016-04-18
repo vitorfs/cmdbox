@@ -16,3 +16,7 @@
   color: #14a6d8;
   margin-right: 8px;
 }
+
+.folder-expand-icon {
+  cursor: pointer;
+}

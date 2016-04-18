@@ -30,7 +30,7 @@ class File(models.Model):
     extension = models.CharField(_('extension'), max_length=10, null=True, blank=True)
     size = models.PositiveIntegerField(_('size'), default=0)
     template = models.ForeignKey(ScaffoldTemplate, related_name='files')
-    folder = models.ForeignKey('File', null=True, blank=True, related_name='files', validators=[validate_folder, ])
+    folder = models.ForeignKey('File', null=True, related_name='files', validators=[validate_folder, ])
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     file_type = models.PositiveSmallIntegerField(_('file type'), choices=FILE_TYPES, default=FILE)

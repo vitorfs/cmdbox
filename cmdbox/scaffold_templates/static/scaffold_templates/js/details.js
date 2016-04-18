@@ -12,9 +12,9 @@ $(function () {
       var collect = false;
       var parentDepth = -1;
       $("#table-files tbody tr").each(function () {
-        var depth = parseInt($(this).attr("data-depth"));
         if (collect) {
-          if (depth === parentDepth) {
+          var depth = parseInt($(this).attr("data-depth"));
+          if (depth <= parentDepth) {
             collect = false;
           }
           else {
@@ -258,7 +258,8 @@ $(function () {
   $("main").on("click", ".js-duplicate-file", duplicateFile);
 
   /* Expand/Contract folder */
-  $("#table-files").on("click", "tbody tr[data-type='folder'] a.file-name", toggleFolder);
+  $("#table-files").on("click", "tbody tr[data-type='folder'] .file-name", toggleFolder);
+  $("#table-files").on("click", "tbody tr[data-type='folder'] .folder-expand-icon", toggleFolder);
 
 
   /***************************************************************************/

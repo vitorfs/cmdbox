@@ -15,14 +15,14 @@
       /* Bootstrap modal renderer */
       $.fn.renderDialog = function (title, message) {
         $(this).find(".modal-title, .modal-body").empty();
-        $(".modal-title", this).text(title);
+        $(".modal-title", this).html(title);
         if ($.isArray(message)) {
           $.each(message, function (index, value) {
-            $("</p>").text(value).appendTo(".modal-body", this);
+            $("</p>").html(value).appendTo(".modal-body", this);
           });
         }
         else {
-          $("</p>").text(message).appendTo(".modal-body", this);
+          $("</p>").html(message).appendTo(".modal-body", this);
         }
         $(this).modal();
       };
@@ -167,7 +167,10 @@
       $("#modal-confirm-action").renderDialog(title, message);
     },
 
-    fn: new Array()
+    fn: new Array(),
+
+    ENTER_KEY: 13,
+    ESCAPE_KEY: 27
 
   };
 

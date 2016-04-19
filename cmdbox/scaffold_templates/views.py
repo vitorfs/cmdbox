@@ -12,8 +12,7 @@ from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from cmdbox.scaffold_templates.models import ScaffoldTemplate, File
-from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, CreateFileForm, \
-    RenameFileForm
+from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, FileForm
 from cmdbox.scaffold_templates.templatetags.filewalker import walk
 
 
@@ -53,25 +52,31 @@ def details(request, username, slug):
 
 def _add_file(request, file_instance):
     depth = request.GET.get('depth', 0)
-
     json_context = dict()
-
     if request.method == 'POST':
-        form = CreateFileForm(request.POST, instance=file_instance)
+        form = FileForm(request.POST, instance=file_instance)
         is_valid = json_context['is_valid'] = form.is_valid()
         if is_valid:
             _file = form.save()
             files = _file.template.files.all()
-
             json_context['file'] = _file.pk
             json_context['html'] = walk(files)
             json_context['itemsCount'] = files.count()
-
-            return HttpResponse(json.dumps(json_context), content_type='application/json')
+        else:
+            json_context['error'] = form['name'].errors
     else:
         initial_name = _('untitled {0}').format(file_instance.get_file_type_display())
-        form = CreateFileForm(instance=file_instance, initial={'name': initial_name})
-
+        base_name = initial_name
+        i = 1
+        while True:
+            if File.objects \
+                .filter(name=initial_name, template=file_instance.template, folder=file_instance.folder) \
+                .exists():
+                i += 1
+                initial_name = '{0} {1}'.format(base_name, i)
+            else:
+                break
+        form = FileForm(instance=file_instance, initial={'name': initial_name})
     reverse_url = request.path
     context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
     json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
@@ -128,20 +133,20 @@ def rename_file(request, username, slug, file_id):
     json_context = dict()
 
     if request.method == 'POST':
-        form = RenameFileForm(request.POST, instance=_file)
+        form = FileForm(request.POST, instance=_file)
         is_valid = json_context['is_valid'] = form.is_valid()
         if is_valid:
             _file = form.save()
             json_context['file'] = _file.pk
             json_context['html'] = walk(_file.template.files.all())
-            return HttpResponse(json.dumps(json_context), content_type='application/json')
+        else:
+            json_context['error'] = form['name'].errors
     else:
-        form = RenameFileForm(instance=_file)
-
-    template = _file.template
-    reverse_url = reverse('scaffold_templates:rename_file', args=(template.user.username, template.slug, _file.pk))
-    context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
-    json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
+        form = FileForm(instance=_file)
+        template = _file.template
+        reverse_url = reverse('scaffold_templates:rename_file', args=(template.user.username, template.slug, _file.pk))
+        context = Context({'form': form, 'reverse_url': reverse_url, 'depth': depth})
+        json_context['form'] = render_to_string('scaffold_templates/partial_file_form.html', context)
     return HttpResponse(json.dumps(json_context), content_type='application/json')
 
 

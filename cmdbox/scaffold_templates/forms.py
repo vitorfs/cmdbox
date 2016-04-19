@@ -23,26 +23,21 @@ class EditScaffoldTemplate(forms.ModelForm):
         fields = '__all__'
 
 
-class CreateFileForm(forms.ModelForm):
+class FileForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ('name', )
 
     def clean(self):
-        cleaned_data = super(CreateFileForm, self).clean()
+        cleaned_data = super(FileForm, self).clean()
         template = self.instance.template
         folder = self.instance.folder
         name = cleaned_data.get('name')
-        if File.objects.filter(template=template, folder=folder, name=name).exists():
+        files = File.objects.filter(template=template, folder=folder, name=name)
+        if self.instance.pk:
+            files = files.exclude(pk=self.instance.pk)
+        if files.exists():
             self.add_error(
                 'name',
-                _('The name "{0}" is already taken. Please choose a different name.').format(name)
+                _('The name <strong>"{0}"</strong> is already taken. Please choose a different name.').format(name)
             )
-
-
-class RenameFileForm(forms.ModelForm):
-    id = forms.IntegerField(widget=forms.HiddenInput())
-
-    class Meta:
-        model = File
-        fields = ('id', 'name')

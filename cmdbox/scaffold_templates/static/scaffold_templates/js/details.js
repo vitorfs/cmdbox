@@ -122,8 +122,7 @@ $(function () {
         else {
           $("#table-files tbody").prepend(data.form);
         }
-        $("#id_name").focus();
-        $("#id_name").select();
+        $("#id_name").focus().select();
         $("#table-files").stripTable();
       }
     });
@@ -142,9 +141,9 @@ $(function () {
       },
       cache: false,
       success: function (data) {
+        $.cmdbox.fileRow = $(row);
         $(row).replaceWith(data.form);
-        $("#id_name").focus();
-        $("#id_name").select();
+        $("#id_name").focus().select();
         $("#table-files").stripTable();
       }
     });
@@ -173,14 +172,42 @@ $(function () {
           $("#table-files tbody").html(data.html);
           $(".items-count").text(data.itemsCount);
           addFeaturedClass("info", data.file);
-          $("#table-files").stripTable();
+          delete $.cmdbox.fileRow;
         }
         else {
-          $("#form-file").closest("tr").replaceWith(data.form);
+          $.cmdbox.alert("<span class='glyphicon glyphicon-warning-sign'></span> Warning", data.error);
+          //$("#form-file").closest("tr").replaceWith(data.form);
+          var row = $("#form-file").closest("tr");
+          if ($.cmdbox.fileRow !== undefined) {
+            $(row).replaceWith($.cmdbox.fileRow);
+            delete $.cmdbox.fileRow;
+          }
+          else {
+            $(row).remove();
+          }
         }
+      },
+      complete: function () {
+        $.cmdbox.stopLoading();
+        $("#table-files").stripTable();
       }
     });
     return false;
+  };
+
+  var cancelFileFormEdit = function (event) {
+    var key = event.which || event.keyCode;
+    if (key === $.cmdbox.ESCAPE_KEY) {
+      var row = $(this).closest("tr");
+      if ($.cmdbox.fileRow !== undefined) {
+        $(row).replaceWith($.cmdbox.fileRow);
+        delete $.cmdbox.fileRow;
+      }
+      else {
+        $(row).remove();
+      }
+      $("#table-files").stripTable();
+    }
   };
 
   /* Delete file/folder */
@@ -247,7 +274,9 @@ $(function () {
   /* Add files/folders */
   $("main").on("click", ".js-add-file", loadAddFileForm);
   $("main").on("click", ".js-rename-file", loadRenameFileForm);
+  $("main").on("keydown", "#id_name", cancelFileFormEdit);
   $("#table-files").on("submit", "#form-file", saveFile);
+  $("main").on("blur", "#id_name", saveFile);
 
   /* Delete files/folders */
   $("main").on("click", ".js-delete-file", loadDeleteFileDialog);

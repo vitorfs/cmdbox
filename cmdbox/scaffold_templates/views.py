@@ -70,8 +70,8 @@ def _add_file(request, file_instance):
         i = 1
         while True:
             if File.objects \
-                .filter(name=initial_name, template=file_instance.template, folder=file_instance.folder) \
-                .exists():
+                    .filter(name=initial_name, template=file_instance.template, folder=file_instance.folder) \
+                    .exists():
                 i += 1
                 initial_name = '{0} {1}'.format(base_name, i)
             else:

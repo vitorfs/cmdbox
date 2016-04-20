@@ -10,9 +10,11 @@ from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib import messages
+from django.utils.html import escape, mark_safe
 
 from cmdbox.scaffold_templates.models import ScaffoldTemplate, File
-from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, FileForm
+from cmdbox.scaffold_templates.forms import CreateScaffoldTemplate, EditScaffoldTemplate, FileForm, EditFileContentForm
 from cmdbox.scaffold_templates.templatetags.filewalker import walk
 
 
@@ -198,7 +200,27 @@ def edit(request, username, slug):
             )
     else:
         form = EditScaffoldTemplate(instance=scaffold_template)
-    return render(request, 'scaffold_templates/edit.html', {'form': form})
+    return render(request, 'scaffold_templates/edit.html', {'scaffold_template': scaffold_template, 'form': form})
+
+
+@login_required
+def edit_file(request, username, slug, file_id):
+    scaffold_template = get_object_or_404(ScaffoldTemplate, user__username=username, slug=slug)
+    _file = get_object_or_404(File, pk=file_id, template=scaffold_template)
+    if request.method == 'POST':
+        form = EditFileContentForm(request.POST, instance=_file)
+        if form.is_valid():
+            form.save()
+            message = mark_safe(
+                _('The file <strong>{0}</strong> was successfully updated!').format(escape(_file.name))
+            )
+            messages.success(request, message)
+            return redirect(
+                reverse('scaffold_templates:edit', args=(scaffold_template.user.username, scaffold_template.slug))
+            )
+    else:
+        form = EditFileContentForm(instance=_file)
+    return render(request, 'scaffold_templates/edit_file.html', {'scaffold_template': scaffold_template, 'form': form})
 
 
 @login_required

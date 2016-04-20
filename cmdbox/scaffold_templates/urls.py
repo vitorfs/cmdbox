@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^(?P<slug>[^/]+)/(?P<file_id>\d+)/duplicate/$', views.duplicate_file, name='duplicate_file'),
     url(r'^(?P<slug>[^/]+)/(?P<file_id>\d+)/delete/$', views.delete_file, name='delete_file'),
     url(r'^(?P<slug>[^/]+)/edit/$', views.edit, name='edit'),
+    url(r'^(?P<slug>[^/]+)/edit/(?P<file_id>\d+)/$', views.edit_file, name='edit_file'),
     url(r'^(?P<slug>[^/]+)/delete/$', views.delete, name='delete'),
 ]

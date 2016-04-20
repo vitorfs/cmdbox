@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% load i18n static %}
+
+{% block stylesheet %}
+  <style type="text/css">
+    .panel-file .panel-body {
+      height: 200px;
+    }
+
+    .panel-file:hover {
+      cursor: pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'vendor/ace/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+  <script>
+    var editor = ace.edit("content");
+    editor.setTheme("ace/theme/clouds");
+    editor.getSession().setMode("ace/mode/html");
+    editor.getSession().setUseWrapMode(true);
+
+    $(function () {
+      $(".panel-file").hover(function () {
+        $(this).removeClass("panel-default").addClass("panel-info");
+      }, function () {
+        $(this).removeClass("panel-info").addClass("panel-default");
+      });
+
+      $("#form-edit-file").submit(function () {
+        var content = editor.getValue();
+        $("#id_content").text(content);
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'profile' scaffold_template.user.username %}">{{ scaffold_template.user.profile.get_display_name }}</a></li>
+  <li><a href="{% url 'scaffold_templates:list' scaffold_template.user.username %}">{% trans 'Scaffold Templates' %}</a></li>
+  <li class="active">{{ scaffold_template.slug }}</li>
+{% endblock %}
+
+{% block messages %}
+  {{ block.super }}
+  {% if scaffold_template.version == 0 %}
+    {% include 'scaffold_templates/includes/draft_warning.html' %}
+  {% endif %}
+{% endblock %}
+
+{% block content_header %}
+  {% include 'scaffold_templates/includes/header.html' with active='files' %}
+{% endblock %}
+
+{% block content %}
+
+  <form method="post" id="form-edit-file">
+    {% csrf_token %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <span class="glyphicon glyphicon-file"></span>
+          {{ form.instance.build_path }}
+        </h3>
+      </div>
+      <div class="panel-body" style="padding: 0">
+        <textarea id="id_content" name="content" class="hide">{{ form.instance.content|default_if_none:'' }}</textarea>
+        <div id="content" style="width: 100%; height: 350px;">{{ form.instance.content|default_if_none:'' }}</div>
+      </div>
+      <div class="panel-footer">
+        <button type="submit" class="btn btn-primary">
+          <span class="glyphicon glyphicon-ok"></span>
+          {% trans 'Save' %}
+        </button>
+        <a href="{% url 'scaffold_templates:edit' form.instance.template.user.username form.instance.template.slug %}" class="btn btn-default">
+          {% trans 'Discard changes' %}
+        </a>
+      </div>
+    </div>
+
+  </form>
+
+{% endblock %}

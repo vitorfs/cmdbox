@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% load i18n static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" type="text/css" href="{% static 'vendor/highlight/styles/xcode.css' %}">
+  <style type="text/css">
+    .panel-file .panel-body {
+      height: 200px;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .panel-file .panel-body.panel-body-empty {
+      background-color: #f5f5f5;
+      text-align: center;
+      padding-top: 55px;
+    }
+
+    .panel-file .panel-body.panel-body-empty .glyphicon {
+      font-size: 32px;
+      color: #999;
+    }
+
+    .panel-file:hover {
+      cursor: pointer;
+    }
+  </style>
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'vendor/highlight/highlight.pack.js' %}"></script>
+  <script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+    $(function () {
+      $(".panel-file").hover(function () {
+        $(this).removeClass("panel-default").addClass("panel-primary");
+      }, function () {
+        $(this).removeClass("panel-primary").addClass("panel-default");
+      });
+
+      $(".panel-file").click(function () {
+        location.href = $(this).attr("data-url");
+      });
+
+      $("[name='files-display-options']").change(function () {
+        if ($(this).val() === "grid") {
+          $("#files-list .col-md-12").removeClass("col-md-12").addClass("col-md-6");
+        }
+        else {
+          $("#files-list .col-md-6").removeClass("col-md-6").addClass("col-md-12");
+        }
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'profile' scaffold_template.user.username %}">{{ scaffold_template.user.profile.get_display_name }}</a></li>
+  <li><a href="{% url 'scaffold_templates:list' scaffold_template.user.username %}">{% trans 'Scaffold Templates' %}</a></li>
+  <li class="active">{{ scaffold_template.slug }}</li>
+{% endblock %}
+
+{% block messages %}
+  {{ block.super }}
+  {% if scaffold_template.version == 0 %}
+    {% include 'scaffold_templates/includes/draft_warning.html' %}
+  {% endif %}
+{% endblock %}
+
+{% block content_header %}
+  {% include 'scaffold_templates/includes/header.html' with active='files' %}
+{% endblock %}
+
+{% block content %}
+  <div class="btn-group btn-group-justified" role="group" aria-label="File Wizard" style="margin-bottom: 20px">
+    <a href="{% url 'scaffold_templates:details' scaffold_template.user.username scaffold_template.slug %}" class="btn btn-sm btn-primary">
+      <span class="glyphicon glyphicon-ok"></span> {% trans 'File Structure' %}
+    </a>
+    <a href="{% url 'scaffold_templates:edit' scaffold_template.user.username scaffold_template.slug %}" class="btn btn-sm btn-primary">
+      <span class="glyphicon glyphicon-unchecked"></span> {% trans 'File Contents' %}
+    </a>
+    <a href="#" class="btn btn-sm btn-default">
+      <span class="glyphicon glyphicon-unchecked"></span> {% trans 'Default Values' %}
+    </a>
+    <a href="#" class="btn btn-sm btn-default">
+      <span class="glyphicon glyphicon-unchecked"></span> {% trans 'Review & Release' %}
+    </a>
+  </div>
+
+  {% comment %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-info-sign"></span> Define the File Contents
+    </div>
+    <div class="panel-body">
+
+    </div>
+  </div>
+  {% endcomment %}
+
+  <nav>
+    <ul class="pager">
+      <li class="previous">
+        <a href="{% url 'scaffold_templates:details' scaffold_template.user.username scaffold_template.slug %}">
+          <span aria-hidden="true">&larr;</span> {% trans 'Previous' %}
+        </a>
+      </li>
+      <li class="next">
+        <a href="#">
+          {% trans 'Next' %} <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="btn-group" data-toggle="buttons" style="margin-bottom: 20px">
+    <label class="btn btn-default active">
+      <input type="radio" name="files-display-options" value="grid" autocomplete="off" checked>
+      <span class="glyphicon glyphicon-th-large"></span>
+    </label>
+    <label class="btn btn-default">
+      <input type="radio" name="files-display-options" value="list" autocomplete="off">
+      <span class="glyphicon glyphicon-menu-hamburger"></span>
+    </label>
+  </div>
+
+  <div id="files-list">
+    <div class="row">
+      {% for file in scaffold_template.list_files %}
+        <div class="col-md-6">
+          <div class="panel panel-default panel-file"
+               data-url="{% url 'scaffold_templates:edit_file' scaffold_template.user.username scaffold_template.slug file.pk %}">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-file"></span>
+              {{ file.path }}
+            </div>
+            {% if file.content %}
+              <div class="panel-body">
+                <pre><code>{{ file.content }}</code></pre>
+              </div>
+            {% else %}
+              <div class="panel-body panel-body-empty">
+                <span class="glyphicon glyphicon-file"></span>
+                <h4>{% trans 'This file is empty. Click to edit.' %}</h4>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {% if forloop.counter|divisibleby:2 %}</div><div class="row">{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <nav>
+    <ul class="pager">
+      <li class="previous">
+        <a href="{% url 'scaffold_templates:details' scaffold_template.user.username scaffold_template.slug %}">
+          <span aria-hidden="true">&larr;</span> {% trans 'Previous' %}
+        </a>
+      </li>
+      <li class="next">
+        <a href="#">
+          {% trans 'Next' %} <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+{% endblock %}

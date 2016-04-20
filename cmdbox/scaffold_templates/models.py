@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 import os.path
 import re
 
+import humanize
+
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,6 +18,22 @@ class ScaffoldTemplate(AbstractService):
         verbose_name_plural = _('scaffold template')
         unique_together = (('user', 'slug'), )
         ordering = ('-updated_at', )
+
+    def get_folders_dict(self):
+        folder_set = self.files.filter(file_type=File.FOLDER).values()
+        folders = dict()
+        for folder in folder_set:
+            folders[folder['id']] = folder
+        return folders
+
+    def list_files(self):
+        folders = self.get_folders_dict()
+        files = self.files.filter(file_type=File.FILE).select_related('folder')
+        for _file in files:
+            _file.build_path(folders)
+        files = list(files)
+        files.sort(key=lambda k: (os.path.dirname(k.path), os.path.basename(k.path)))
+        return files
 
 
 class File(models.Model):
@@ -34,6 +52,7 @@ class File(models.Model):
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     updated_at = models.DateTimeField(_('updated at'), auto_now=True)
     file_type = models.PositiveSmallIntegerField(_('file type'), choices=FILE_TYPES, default=FILE)
+    content = models.TextField(_('content'), null=True, blank=True)
 
     class Meta:
         ordering = ('-file_type', 'name', )
@@ -45,8 +64,40 @@ class File(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.extension = os.path.splitext(self.name)[1][1:].strip()[:10]
+        if self.file_type == File.FILE:
+            self.extension = os.path.splitext(self.name)[1][1:].strip()[:10]
+            self.calculate_size()
+        else:
+            self.extension = None
+            self.content = None
         super(File, self).save(*args, **kwargs)
+
+    def build_path(self, folders=None):
+        if folders is None:
+            folders = self.template.get_folders_dict()
+        path = '{0}/{1}'.format(self.template.slug, self.name)
+        depth = 0
+        folder = self.folder
+        if folder is not None:
+            folder_id = folder.pk
+            path = '{0}/{1}'.format(folders[folder_id]['name'], path)
+            depth += 1
+            while folders[folder_id]['folder_id'] is not None:
+                folder_id = folders[folder_id]['folder_id']
+                path = '{0}/{1}'.format(folders[folder_id]['name'], path)
+                depth += 1
+        self.path = path
+        self.depth = depth
+        return self.path
+
+    def calculate_size(self):
+        if self.content:
+            self.size = len(self.content.encode('utf8'))
+        else:
+            self.size = 0
+
+    def get_naturalsize(self):
+        return humanize.naturalsize(self.size)
 
     def is_folder(self):
         return self.file_type == File.FOLDER
@@ -97,7 +148,8 @@ class File(models.Model):
             size=self.size,
             template=self.template,
             folder=self.folder,
-            file_type=self.file_type
+            file_type=self.file_type,
+            content=self.content
         )
         return new_file
 

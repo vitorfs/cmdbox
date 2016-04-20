@@ -41,3 +41,9 @@ class FileForm(forms.ModelForm):
                 'name',
                 _('The name <strong>"{0}"</strong> is already taken. Please choose a different name.').format(name)
             )
+
+
+class EditFileContentForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = ('content', )

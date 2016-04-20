@@ -175,7 +175,7 @@ $(function () {
           delete $.cmdbox.fileRow;
         }
         else {
-          $.cmdbox.alert("<span class='glyphicon glyphicon-warning-sign'></span> Warning", data.error);
+          $.cmdbox.alert("<span class='glyphicon glyphicon-alert'></span> Warning", data.error);
           //$("#form-file").closest("tr").replaceWith(data.form);
           var row = $("#form-file").closest("tr");
           if ($.cmdbox.fileRow !== undefined) {

@@ -9,6 +9,10 @@
       height: 200px;
       overflow: hidden;
       padding: 0;
+  -webkit-transition: all 0.2s ease 0s;
+     -moz-transition: all 0.2s ease 0s;
+       -o-transition: all 0.2s ease 0s;
+          transition: all 0.2s ease 0s;
     }
 
     .panel-file .panel-body.panel-body-empty {
@@ -25,6 +29,22 @@
     .panel-file:hover {
       cursor: pointer;
     }
+
+    .panel-file table {
+      font-size: 12px;
+    }
+
+    .panel-file table tbody {
+      color: #777;
+    }
+
+    .file-container {
+  -webkit-transition: all 0.2s ease 0s;
+     -moz-transition: all 0.2s ease 0s;
+       -o-transition: all 0.2s ease 0s;
+          transition: all 0.2s ease 0s;
+    }
+
   </style>
 {% endblock %}
 
@@ -41,16 +61,27 @@
 
       $(".panel-file").click(function () {
         location.href = $(this).attr("data-url");
+        //var container = $(this).closest(".file-container");
+        //$(container).removeClass().addClass("col-md-12");
+        //$(container).css("width", "100%");
+        //$(".panel-body", container).css("height", "400px");
       });
 
-      $("[name='files-display-options']").change(function () {
-        if ($(this).val() === "grid") {
-          $("#files-list .col-md-12").removeClass("col-md-12").addClass("col-md-6");
+      $.fn.changeDisplay = function (displayOption) {
+        if (displayOption === "grid") {
+          $(".col-md-12", this).removeClass("col-md-12").addClass("col-md-6");
         }
         else {
-          $("#files-list .col-md-6").removeClass("col-md-6").addClass("col-md-12");
+          $(".col-md-6", this).removeClass("col-md-6").addClass("col-md-12");
         }
+      };
+
+      $("[name='files-display-options']").change(function () {
+        var displayOption = $(this).val();
+        $("#files-list").changeDisplay(displayOption);
+        Cookies.set("files-display-options", displayOption);
       });
+
     });
   </script>
 {% endblock %}
@@ -115,12 +146,20 @@
   </nav>
 
   <div class="btn-group" data-toggle="buttons" style="margin-bottom: 20px">
-    <label class="btn btn-default active">
-      <input type="radio" name="files-display-options" value="grid" autocomplete="off" checked>
+    <label class="btn btn-default{% if files_display_option == 'grid' %} active{% endif %}">
+      <input type="radio"
+             name="files-display-options"
+             id="file-display-grid"
+             value="grid"
+             autocomplete="off"{% if files_display_option == 'grid' %} checked{% endif %}>
       <span class="glyphicon glyphicon-th-large"></span>
     </label>
-    <label class="btn btn-default">
-      <input type="radio" name="files-display-options" value="list" autocomplete="off">
+    <label class="btn btn-default{% if files_display_option == 'list' %} active{% endif %}">
+      <input type="radio"
+             name="files-display-options"
+             id="file-display-list"
+             value="list"
+             autocomplete="off"{% if files_display_option == 'list' %} checked{% endif %}>
       <span class="glyphicon glyphicon-menu-hamburger"></span>
     </label>
   </div>
@@ -128,13 +167,29 @@
   <div id="files-list">
     <div class="row">
       {% for file in scaffold_template.list_files %}
-        <div class="col-md-6">
+        <div class="file-container {% if files_display_option == 'list' %}col-md-12{% else %}col-md-6{% endif %}">
           <div class="panel panel-default panel-file"
                data-url="{% url 'scaffold_templates:edit_file' scaffold_template.user.username scaffold_template.slug file.pk %}">
             <div class="panel-heading">
               <span class="glyphicon glyphicon-file"></span>
               {{ file.path }}
             </div>
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th>Kind</th>
+                  <th>Size</th>
+                  <th>Date Modified</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ file.extension }}</td>
+                  <td>{{ file.get_naturalsize }}</td>
+                  <td>{{ file.updated_at|date:"M j, Y, H:i" }}</td>
+                </tr>
+              </tbody>
+            </table>
             {% if file.content %}
               <div class="panel-body">
                 <pre><code>{{ file.content }}</code></pre>

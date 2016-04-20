@@ -200,7 +200,12 @@ def edit(request, username, slug):
             )
     else:
         form = EditScaffoldTemplate(instance=scaffold_template)
-    return render(request, 'scaffold_templates/edit.html', {'scaffold_template': scaffold_template, 'form': form})
+    files_display_option = request.COOKIES.get('files-display-options', 'grid')
+    return render(request, 'scaffold_templates/edit.html', {
+        'scaffold_template': scaffold_template,
+        'form': form,
+        'files_display_option': files_display_option
+    })
 
 
 @login_required

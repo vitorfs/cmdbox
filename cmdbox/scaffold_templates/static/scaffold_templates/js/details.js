@@ -275,7 +275,10 @@ $(function () {
   $("main").on("click", ".js-add-file", loadAddFileForm);
   $("main").on("click", ".js-rename-file", loadRenameFileForm);
   $("main").on("keydown", "#id_name", cancelFileFormEdit);
-  $("#table-files").on("submit", "#form-file", saveFile);
+  $("#table-files").on("submit", "#form-file", function () {
+    $("#id_name").blur();
+    return false;
+  });
   $("main").on("blur", "#id_name", saveFile);
 
   /* Delete files/folders */

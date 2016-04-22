@@ -1,6 +1,5 @@
 from social.apps.django_app.default.models import UserSocialAuth
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash

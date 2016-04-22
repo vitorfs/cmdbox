@@ -7,7 +7,7 @@
   {% else %}
     {{ page_user.username }}
   {% endif %}
-  <a href="{% url 'account_settings' %}" role="button" class="btn btn-default btn-sm pull-right" style="margin-top: 16px">
+  <a href="{% url 'settings:profile' %}" role="button" class="btn btn-default btn-sm pull-right" style="margin-top: 16px">
     <span class="glyphicon glyphicon-pencil"></span> Edit profile
   </a>
 </h2>

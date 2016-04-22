@@ -12,9 +12,27 @@
           <h2 class="page-header">{% trans 'Sign up for CmdBox' %}</h2>
           <form method="post">
             {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <a href="{% url 'social:begin' 'github' %}" class="btn btn-block btn-github">
+                  <span class="fa fa-github"></span>
+                  {% trans 'Sign up with GitHub' %}
+                </a>
+              </div>
+              <div class="col-md-6">
+                <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-block btn-twitter">
+                  <span class="fa fa-twitter"></span>
+                  {% trans 'Sign up with Twitter' %}
+                </a>
+              </div>
+            </div>
+            <div class="or-container">
+              <hr>
+              <div class="or">{% trans 'OR' %}</div>
+            </div>
             {% include 'forms/form.html' with form=form %}
             <div class="form-group">
-              <button type="submit" class="btn btn-default">{% trans 'Submit' %}</button>
+              <button type="submit" class="btn btn-primary">{% trans 'Sign up' %}</button>
             </div>
           </form>
         </div>

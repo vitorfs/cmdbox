@@ -9,7 +9,7 @@ class ProfilesAccountSettingsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('john', 'john@doe.com', '123')
         self.client.login(username='john', password='123')
-        self.response = self.client.get(r('account_settings'))
+        self.response = self.client.get(r('settings:profile'))
 
     def test_get(self):
         self.assertEqual(self.response.status_code, 200)
@@ -46,7 +46,7 @@ class ProfilesAccountSettingsValidPostTests(TestCase):
             'location': 'Oulu',
             'company': 'John Company'
         }
-        self.response = self.client.post(r('account_settings'), data)
+        self.response = self.client.post(r('settings:profile'), data)
 
     def test_post(self):
         self.assertEqual(self.response.status_code, 302)
@@ -61,7 +61,7 @@ class ProfilesAccountSettingsInvalidPostTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('john', 'john@doe.com', '123')
         self.client.login(username='john', password='123')
-        self.response = self.client.post(r('account_settings'), {'email': 'invalidemail', 'url': 'invalidurl'})
+        self.response = self.client.post(r('settings:profile'), {'email': 'invalidemail', 'url': 'invalidurl'})
 
     def test_post(self):
         self.assertEqual(200, self.response.status_code)

@@ -28,9 +28,7 @@ def add(request):
         form = CreateScaffoldTemplate(request.user, request.POST)
         if form.is_valid():
             scaffold_template = form.save()
-            return redirect(
-                reverse('scaffold_templates:details', args=(scaffold_template.user.username, scaffold_template.slug))
-            )
+            return redirect('scaffold_templates:details', scaffold_template.user.username, scaffold_template.slug)
     else:
         form = CreateScaffoldTemplate(request.user)
     return render(request, 'scaffold_templates/add.html', {'form': form})
@@ -195,9 +193,7 @@ def edit(request, username, slug):
         form = EditScaffoldTemplate(request.POST, instance=scaffold_template)
         if form.is_valid():
             scaffold_template = form.save()
-            return redirect(
-                reverse('scaffold_templates:details', args=(scaffold_template.user.username, scaffold_template.slug))
-            )
+            return redirect('scaffold_templates:details', scaffold_template.user.username, scaffold_template.slug)
     else:
         form = EditScaffoldTemplate(instance=scaffold_template)
     files_display_option = request.COOKIES.get('files-display-options', 'grid')
@@ -220,9 +216,7 @@ def edit_file(request, username, slug, file_id):
                 _('The file <strong>{0}</strong> was successfully updated!').format(escape(_file.name))
             )
             messages.success(request, message)
-            return redirect(
-                reverse('scaffold_templates:edit', args=(scaffold_template.user.username, scaffold_template.slug))
-            )
+            return redirect('scaffold_templates:edit', scaffold_template.user.username, scaffold_template.slug)
     else:
         form = EditFileContentForm(instance=_file)
     return render(request, 'scaffold_templates/edit_file.html', {'scaffold_template': scaffold_template, 'form': form})
@@ -233,4 +227,4 @@ def edit_file(request, username, slug, file_id):
 def delete(request, username, slug):
     scaffold_template = get_object_or_404(ScaffoldTemplate, user__username=username, slug=slug)
     scaffold_template.delete()
-    return redirect(reverse('profile', args=(request.user.username, )))
+    return redirect('profile', request.user.username)

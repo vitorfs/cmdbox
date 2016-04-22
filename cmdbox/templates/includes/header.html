@@ -70,7 +70,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="{% url 'account_settings' %}">
+                  <a href="{% url 'settings:profile' %}">
                     {% trans 'Account settings' %}
                   </a>
                 </li>
@@ -85,7 +85,7 @@
           <a href="{% url 'login' %}" class="btn btn-default navbar-btn navbar-right">
             {% trans 'Login' %}
           </a>
-          <a href="{% url 'signup' %}" class="btn btn-default navbar-btn navbar-right" style="margin-right: 10px">
+          <a href="{% url 'signup' %}" class="btn btn-primary navbar-btn navbar-right" style="margin-right: 10px">
             {% trans 'Sign up' %}
           </a>
         {% endif %}

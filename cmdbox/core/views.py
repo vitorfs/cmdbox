@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 
 from cmdbox.core.forms import SignupForm
+from cmdbox.snippets import views as snippets_views
 
 
 def home(request):
@@ -22,3 +23,7 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request, 'core/signup.html', {'form': form})
+
+
+def profile(request, username):
+    return snippets_views.snippets(request, username)

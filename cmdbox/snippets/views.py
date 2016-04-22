@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
@@ -18,7 +17,7 @@ def add(request):
         form = CreateSnippetForm(request.user, request.POST)
         if form.is_valid():
             form.save()
-            return redirect(reverse('profile', args=(request.user.username,)))
+            return redirect('profile', request.user.username)
     else:
         form = CreateSnippetForm(request.user)
     return render(request, 'snippets/add.html', {'form': form})
@@ -41,7 +40,7 @@ def edit(request, username, slug):
         form = EditSnippetForm(request.POST, instance=snippet)
         if form.is_valid():
             snippet = form.save()
-            return redirect(reverse('snippets:details', args=(snippet.user.username, snippet.slug)))
+            return redirect('snippets:details', snippet.user.username, snippet.slug)
     else:
         form = EditSnippetForm(instance=snippet)
     return render(request, 'snippets/edit.html', {'form': form})
@@ -52,4 +51,4 @@ def edit(request, username, slug):
 def delete(request, username, slug):
     snippet = get_object_or_404(Snippet, user__username=username, slug=slug)
     snippet.delete()
-    return redirect(reverse('profile', args=(request.user.username, )))
+    return redirect('profile', request.user.username)

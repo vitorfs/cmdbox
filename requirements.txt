@@ -1,5 +1,5 @@
 dj-database-url==0.4.0
-Django==1.9.4
+Django==1.9.5
 django-debug-toolbar==1.4
 django-widget-tweaks==1.4.1
 model-mommy==1.2.6
@@ -12,3 +12,4 @@ coverage==4.0.3
 coveralls==1.1
 pyparsing==2.1.1
 humanize==0.5.1
+python-social-auth==0.2.18

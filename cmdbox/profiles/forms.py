@@ -10,6 +10,12 @@ class UserForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email')
 
 
+class ChangeUsernameForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', )
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile

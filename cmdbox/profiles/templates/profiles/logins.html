@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+
+{% block title %}{% trans 'My logins' %}{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{% url 'settings:profile' %}">{% trans 'Settings' %}</a></li>
+  <li class="active">{% trans 'My logins' %}</li>
+{% endblock %}
+
+{% block content_header %}
+  <h2>
+    {% trans 'My logins' %} <small class="text-muted">({{ user.username }})</small>
+  </h2>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-4">
+      {% include 'profiles/includes/menu_settings.html' with active='logins' %}
+    </div>
+    <div class="col-md-8">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-xs-6">
+              <h4>
+                <span class="fa fa-github"></span> GitHub
+              </h4>
+            </div>
+            <div class="col-xs-6 text-right">
+              {% if github_login %}
+                <a href="" class="btn btn-link">(disconnect)</a>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-xs-6">
+              <h4>
+                <span class="fa fa-twitter"></span> Twitter
+              </h4>
+            </div>
+            <div class="col-xs-6 text-right">
+              {% if twitter_login %}
+              {% else %}
+                <a href="" class="btn btn-twitter">
+                  <span class="fa fa-twitter"></span> Connect to Twitter
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}

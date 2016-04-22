@@ -15,7 +15,7 @@ class ProfilesAccountSettingsTests(TestCase):
         self.assertEqual(self.response.status_code, 200)
 
     def test_template(self):
-        self.assertTemplateUsed(self.response, 'profiles/account_settings.html')
+        self.assertTemplateUsed(self.response, 'profiles/profile.html')
 
     def test_has_forms(self):
         user_form = self.response.context['user_form']
@@ -67,7 +67,7 @@ class ProfilesAccountSettingsInvalidPostTests(TestCase):
         self.assertEqual(200, self.response.status_code)
 
     def test_template(self):
-        self.assertTemplateUsed(self.response, 'profiles/account_settings.html')
+        self.assertTemplateUsed(self.response, 'profiles/profile.html')
 
     def test_has_forms(self):
         user_form = self.response.context['user_form']

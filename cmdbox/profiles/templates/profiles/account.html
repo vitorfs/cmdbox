@@ -2,32 +2,31 @@
 
 {% load i18n %}
 
-{% block title %}{% trans 'Change password' %}{% endblock %}
+{% block title %}{% trans 'Account settings' %}{% endblock %}
 
 {% block breadcrumb %}
   <li><a href="{% url 'settings:profile' %}">{% trans 'Settings' %}</a></li>
-  <li class="active">{% trans 'Change password' %}</li>
+  <li class="active">{% trans 'Account' %}</li>
 {% endblock %}
 
 {% block content_header %}
   <h2>
-    {% trans 'Change password' %} <small class="text-muted">({{ user.username }})</small>
+    {% trans 'Account' %} <small class="text-muted">({{ user.username }})</small>
   </h2>
 {% endblock %}
 
 {% block content %}
   <div class="row">
     <div class="col-md-4">
-      {% include 'profiles/includes/menu_settings.html' with active='password' %}
+      {% include 'profiles/includes/menu_settings.html' with active='account' %}
     </div>
     <div class="col-md-8">
-      {% if not user.has_usable_password %}
-        <div class="alert alert-warning">
-          <span class="glyphicon glyphicon-alert"></span>
-          You have not defined a password yet.
-        </div>
-      {% endif %}
       <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            {% trans 'Change username' %}
+          </h3>
+        </div>
         <div class="panel-body">
           <form method="post">
             {% csrf_token %}
@@ -36,6 +35,18 @@
               <button type="submit" class="btn btn-primary">{% trans 'Save changes' %}</button>
             </div>
           </form>
+        </div>
+      </div>
+
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <span class="glyphicon glyphicon-alert"></span>
+            {% trans 'Terminate account' %}
+          </h3>
+        </div>
+        <div class="panel-body">
+
         </div>
       </div>
     </div>

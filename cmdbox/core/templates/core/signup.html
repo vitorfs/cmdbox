@@ -14,13 +14,13 @@
             {% csrf_token %}
             <div class="row">
               <div class="col-md-6">
-                <a href="{% url 'social:begin' 'github' %}" class="btn btn-block btn-github">
+                <a href="{% url 'social:begin' 'github' %}" class="btn btn-block btn-social btn-github">
                   <span class="fa fa-github"></span>
                   {% trans 'Sign up with GitHub' %}
                 </a>
               </div>
               <div class="col-md-6">
-                <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-block btn-twitter">
+                <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-block btn-social btn-twitter">
                   <span class="fa fa-twitter"></span>
                   {% trans 'Sign up with Twitter' %}
                 </a>

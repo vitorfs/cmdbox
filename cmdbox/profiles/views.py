@@ -83,4 +83,10 @@ def logins(request):
         twitter_login = request.user.social_auth.get(provider='twitter')
     except UserSocialAuth.DoesNotExist:
         twitter_login = None
-    return render(request, 'profiles/logins.html', {'github_login': github_login, 'twitter_login': twitter_login})
+
+    can_disconnect = (request.user.social_auth.count() > 1 or request.user.has_usable_password())
+    return render(request, 'profiles/logins.html', {
+        'github_login': github_login,
+        'twitter_login': twitter_login,
+        'can_disconnect': can_disconnect
+    })

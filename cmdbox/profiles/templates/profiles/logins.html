@@ -21,6 +21,7 @@
       {% include 'profiles/includes/menu_settings.html' with active='logins' %}
     </div>
     <div class="col-md-8">
+      {% url 'settings:password' as url_password %}
       <ul class="list-group">
         <li class="list-group-item">
           <div class="row">
@@ -31,10 +32,45 @@
             </div>
             <div class="col-xs-6 text-right">
               {% if github_login %}
-                <a href="" class="btn btn-link">(disconnect)</a>
+                <div style="padding-top: 10px">
+                  {% if can_disconnect %}
+                    <form method="post" action="{% url 'social:disconnect' 'github' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        {% trans 'Disconnect from Github' %}
+                      </button>
+                    </form>
+                  {% else %}
+                    <div class="from-group">
+                      <button type="button" class="btn btn-sm btn-danger" disabled>
+                        {% trans 'Disconnect from Github' %}
+                      </button>
+                    </div>
+                  {% endif %}
+                </div>
+              {% else %}
+                <a href="{% url 'social:begin' 'github' %}" class="btn btn-social btn-github" style="margin-top: 3px">
+                  <span class="fa fa-github"></span> Connect to Github
+                </a>
               {% endif %}
             </div>
           </div>
+          {% if github_login %}
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  {% trans 'Connected as' %} <a href="https://github.com/{{ github_login.extra_data.login }}/" target="_blank">{{ github_login.extra_data.login }}</a>
+                </p>
+                {% if not can_disconnect %}
+                  <p class="text-danger">
+                    {% blocktrans trimmed %}
+                      You must <a href="{{ url_password }}">define a password</a> for your account before disconnecting it from Github.
+                    {% endblocktrans %}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
         </li>
         <li class="list-group-item">
           <div class="row">
@@ -45,13 +81,45 @@
             </div>
             <div class="col-xs-6 text-right">
               {% if twitter_login %}
+                <div style="padding-top: 10px">
+                  {% if can_disconnect %}
+                    <form method="post" action="{% url 'social:disconnect' 'twitter' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-danger">
+                        {% trans 'Disconnect from Twitter' %}
+                      </button>
+                    </form>
+                  {% else %}
+                    <div class="from-group">
+                      <button type="button" class="btn btn-sm btn-danger" disabled>
+                        {% trans 'Disconnect from Twitter' %}
+                      </button>
+                    </div>
+                  {% endif %}
+                </div>
               {% else %}
-                <a href="" class="btn btn-twitter">
+                <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-social btn-twitter" style="margin-top: 3px">
                   <span class="fa fa-twitter"></span> Connect to Twitter
                 </a>
               {% endif %}
             </div>
           </div>
+          {% if twitter_login %}
+            <div class="row">
+              <div class="col-xs-12">
+                <p>
+                  {% trans 'Connected as' %} <a href="https://twitter.com/{{ twitter_login.extra_data.access_token.screen_name }}/" target="_blank">@{{ twitter_login.extra_data.access_token.screen_name }}</a>
+                </p>
+                {% if not can_disconnect %}
+                  <p class="text-danger">
+                    {% blocktrans trimmed %}
+                      You must <a href="{{ url_password }}">define a password</a> for your account before disconnecting it from Twitter.
+                    {% endblocktrans %}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
         </li>
       </ul>
     </div>

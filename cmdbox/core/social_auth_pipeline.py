@@ -7,7 +7,7 @@ def get_username(strategy, details, user=None, *args, **kwargs):
         i = 0
         while User.objects.filter(username__iexact=username).exists():
             i += 1
-            username = u'{0}{1}'.format(details['username'], i);
+            username = u'{0}{1}'.format(details['username'], i)
         final_username = username
     else:
         final_username = user.username

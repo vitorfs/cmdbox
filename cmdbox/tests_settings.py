@@ -15,4 +15,14 @@ class DisableMigrations(object):
     def __getitem__(self, item):
         return 'notmigrations'
 
-MIGRATION_MODULES = DisableMigrations()
+#MIGRATION_MODULES = DisableMigrations()
+MIGRATION_MODULES = {
+    'scaffold_templates': None,
+    'snippets': None,
+    'core': None,
+    'profiles': None,
+    'sessions': None,
+    'auth': None,
+    'contenttypes': None,
+    'default': None
+}
